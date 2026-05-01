@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<meta name="theme-color" content="#000408"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<title>TRON · LEGACY</title>
+<style>
+/* ── FONTS ── */
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
+/* ── TRON LEGACY PALETTE ── */
+:root{
+  --bg:#000408; --bg2:#010d14; --bg3:#020a10;
+  --cyan:#00f5ff; --cyan2:#00c8d7; --cyan3:#0af;
+  --orange:#ff6a00; --orange2:#ff9500;
+  --gold:#ffd000; --gold2:#ffaa00;
+  --blue:#0066ff; --blue2:#003ecc;
+  --purple:#7b00ff;
+  --red:#ff2200;
+  --white:#e8f4f8;
+  --dim:rgba(0,245,255,0.12);
+  --border:rgba(0,245,255,0.22);
+  --border2:rgba(0,245,255,0.07);
+  --glow:0 0 8px var(--cyan),0 0 22px rgba(0,245,255,0.3);
+  --oglow:0 0 8px var(--orange),0 0 20px rgba(255,106,0,0.35);
+  --gglow:0 0 8px var(--gold),0 0 20px rgba(255,208,0,0.3);
+  --fm:'Share Tech Mono',monospace;
+  --fo:'Orbitron',monospace;
+}
+/* ── RESET ── */
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);}
+body{font-family:var(--fm);color:var(--cyan);display:flex;align-items:center;justify-content:center;}
+/* ── SCREEN ── */
+#screen{
+  width:100vw;height:100vh;
+  background:var(--bg);
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;
+}
+/* ── GRID BG ── */
+#screen::before{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(var(--border2) 1px,transparent 1px),
+    linear-gradient(90deg,var(--border2) 1px,transparent 1px);
+  background-size:32px 32px;
+}
+/* ── SCANLINES ── */
+#screen::after{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:50;
+  background:repeating-linear-gradient(transparent 0 2px,rgba(0,0,0,0.1) 2px 4px);
+}
+/* ── VIGNETTE ── */
+.vignette{position:absolute;inset:0;pointer-events:none;z-index:49;
+  background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,0.75) 100%);}
+/* ── STATUSBAR ── */
+#statusbar{
+  position:relative;z-index:10;width:100%;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 18px 0;font-size:16px;color:var(--cyan2);letter-spacing:1px;
+}
+.sb-left,.sb-right{display:flex;align-items:center;gap:8px;}
+.sb-mid{font-family:var(--fo);font-size:18px;color:var(--cyan);letter-spacing:2px;}
+.net-badge{padding:3px 9px;border:1px solid var(--cyan2);border-radius:3px;
+  font-size:14px;letter-spacing:2px;color:var(--cyan2);}
+.net-badge.lte{border-color:var(--gold2);color:var(--gold2);}
+.net-badge.wifi{border-color:var(--cyan);color:var(--cyan);}
+.net-badge.off{border-color:var(--red);color:var(--red);}
+/* Battery */
+.batt-wrap{display:flex;align-items:center;gap:5px;}
+.batt-pct{font-size:14px;color:var(--cyan2);font-family:var(--fm);}
+.batt-shell{width:30px;height:15px;border:1.5px solid currentColor;border-radius:2px;
+  padding:1.5px;position:relative;display:inline-block;}
+.batt-shell::after{content:'';position:absolute;right:-5px;top:50%;
+  transform:translateY(-50%);width:4px;height:7px;background:currentColor;border-radius:0 2px 2px 0;}
+.batt-fill{height:100%;background:var(--cyan);border-radius:1px;box-shadow:0 0 4px var(--cyan);transition:width .5s;}
+.batt-fill.charging{background:var(--gold);box-shadow:0 0 6px var(--gold);animation:chargepulse 1s ease-in-out infinite;}
+.batt-fill.low{background:var(--red);box-shadow:0 0 6px var(--red);}
+.batt-bolt{font-size:13px;color:var(--gold);line-height:1;display:none;}
+.batt-bolt.show{display:inline;}
+@keyframes chargepulse{0%,100%{opacity:.7}50%{opacity:1;}}
+
+/* ── ATTITUDE INDICATOR + COMPASS ROW ── */
+#attitude-wrap{
+  position:relative;z-index:10;
+  width:100%;display:flex;flex-direction:row;align-items:flex-start;
+  padding:6px 14px 0;gap:10px;
+}
+#ai-section{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;}
+#ai-container{
+  width:155px;height:155px;position:relative;
+  border-radius:50%;overflow:hidden;
+  border:2px solid var(--border);
+  box-shadow:var(--glow),inset 0 0 30px rgba(0,245,255,0.05);
+}
+#ai-horizon{
+  position:absolute;width:100%;height:200%;
+  top:50%;left:0;
+  transform-origin:center top;
+  transition:transform 0.08s linear;
+}
+.ai-sky{position:absolute;top:0;left:0;width:100%;height:50%;
+  background:linear-gradient(to bottom,#001a2e,#003355);}
+.ai-ground{position:absolute;bottom:0;left:0;width:100%;height:50%;
+  background:linear-gradient(to bottom,#1a0a00,#0a0500);}
+.ai-horizon-line{position:absolute;top:50%;left:0;width:100%;height:2px;
+  background:var(--orange);box-shadow:var(--oglow);transform:translateY(-50%);}
+.ai-pitch-lines{position:absolute;top:0;left:0;width:100%;height:100%;}
+#ai-overlay{position:absolute;inset:0;pointer-events:none;}
+#ai-roll-ring{position:absolute;inset:0;}
+/* axis bars */
+#axis-bars{width:100%;display:flex;justify-content:space-between;gap:5px;padding:0 2px;}
+.axis-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.axis-label{font-size:13px;letter-spacing:3px;color:rgba(0,245,255,0.5);}
+.axis-track{width:100%;height:6px;background:rgba(0,245,255,0.08);border-radius:3px;overflow:hidden;}
+.axis-fill{height:100%;border-radius:3px;transition:width 0.08s,background 0.1s;}
+.axis-val{font-family:var(--fo);font-size:12px;color:var(--cyan);letter-spacing:1px;text-shadow:0 0 6px var(--cyan);}
+.axis-bar-wrap.x .axis-fill{background:var(--cyan);}
+.axis-bar-wrap.y .axis-fill{background:var(--gold);}
+.axis-bar-wrap.z .axis-fill{background:var(--orange);}
+.ai-section-label{font-size:11px;letter-spacing:4px;color:rgba(0,245,255,0.35);margin-top:2px;}
+
+/* ── COMPASS DIAL ── */
+#compass-section{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;}
+#compass-container{
+  width:155px;height:155px;position:relative;
+  border-radius:50%;
+  border:2px solid var(--border);
+  box-shadow:0 0 8px var(--cyan2),inset 0 0 20px rgba(0,245,255,0.04);
+  background:radial-gradient(circle,#010d14 60%,#000408 100%);
+  overflow:visible;
+}
+#compass-svg{width:155px;height:155px;}
+#compass-status{font-size:11px;letter-spacing:3px;color:rgba(0,245,255,0.35);margin-top:2px;}
+#compass-bearing-big{font-family:var(--fo);font-size:15px;font-weight:700;
+  color:var(--cyan);text-shadow:var(--glow);letter-spacing:2px;}
+
+/* ── CLOCK ── */
+#clock-wrap{
+  position:relative;z-index:10;
+  text-align:center;padding:4px 18px 0;
+}
+#ls-time{
+  font-family:var(--fo);font-size:clamp(72px,18vw,108px);font-weight:900;
+  color:var(--cyan);text-shadow:var(--glow);letter-spacing:3px;line-height:1;
+}
+#ls-date{
+  font-family:var(--fo);font-size:clamp(13px,4vw,18px);
+  letter-spacing:4px;color:var(--cyan2);margin-top:4px;
+}
+.ls-div{width:calc(100% - 36px);height:1px;margin:6px 18px;
+  background:linear-gradient(90deg,transparent,var(--border),transparent);}
+
+/* ── PANELS ── */
+.panels-row{
+  position:relative;z-index:10;
+  width:100%;display:flex;gap:8px;padding:0 14px;
+}
+.panel{
+  flex:1;border:1px solid var(--border);
+  background:rgba(0,245,255,0.03);
+  border-radius:8px;padding:8px 10px;
+  display:flex;flex-direction:column;gap:4px;
+  position:relative;overflow:hidden;
+}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0.4;}
+.panel.gold{border-color:rgba(255,208,0,0.3);}
+.panel.gold::before{background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.panel.orange{border-color:rgba(255,106,0,0.3);}
+.panel.orange::before{background:linear-gradient(90deg,transparent,var(--orange),transparent);}
+.panel.blue{border-color:rgba(0,102,255,0.4);}
+.panel.blue::before{background:linear-gradient(90deg,transparent,var(--blue),transparent);}
+.panel-title{font-size:12px;letter-spacing:3px;color:rgba(0,245,255,0.4);
+  text-transform:uppercase;display:flex;align-items:center;gap:5px;}
+.panel-title.gold-t{color:rgba(255,208,0,0.5);}
+.panel-title.org-t{color:rgba(255,106,0,0.5);}
+.panel-title.blue-t{color:rgba(0,102,255,0.6);}
+.panel-val{font-family:var(--fo);font-size:clamp(13px,3.8vw,17px);
+  color:var(--cyan);text-shadow:0 0 8px var(--cyan);letter-spacing:1px;line-height:1.2;}
+.panel-val.gold-v{color:var(--gold);text-shadow:0 0 8px var(--gold);}
+.panel-val.org-v{color:var(--orange);text-shadow:0 0 8px var(--orange);}
+.panel-val.blue-v{color:var(--blue2);text-shadow:0 0 8px var(--blue);}
+.panel-sub{font-size:12px;color:rgba(0,245,255,0.35);letter-spacing:2px;line-height:1.4;}
+.panel-sub.gold-s{color:rgba(255,208,0,0.4);}
+.panel-sub.org-s{color:rgba(255,106,0,0.4);}
+.panel-sub.blue-s{color:rgba(0,102,255,0.5);}
+
+/* ── PROGRESS + COUNTDOWN ── */
+#progress-wrap{
+  position:relative;z-index:10;
+  width:100%;padding:0 14px;display:flex;flex-direction:column;gap:6px;
+}
+.prog-block{border:1px solid var(--border);background:rgba(0,245,255,0.02);
+  border-radius:8px;padding:8px 12px;position:relative;overflow:hidden;}
+.prog-block::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0.3;}
+.prog-top{display:flex;justify-content:space-between;
+  font-size:14px;color:var(--cyan2);letter-spacing:2px;margin-bottom:6px;}
+.prog-bar{width:100%;height:5px;background:rgba(0,245,255,0.08);
+  border-radius:2px;overflow:hidden;margin-bottom:6px;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--cyan2),var(--cyan));
+  box-shadow:0 0 8px var(--cyan);border-radius:2px;transition:width 1s;}
+.prog-bot{display:flex;justify-content:space-between;
+  font-size:13px;color:rgba(0,245,255,0.45);letter-spacing:2px;}
+.countdown-row{display:flex;justify-content:center;gap:10px;}
+.cd-box{font-family:var(--fo);font-size:clamp(22px,6vw,30px);font-weight:700;
+  color:var(--cyan);text-shadow:var(--glow);
+  background:rgba(0,245,255,0.05);border:1px solid var(--border);
+  border-radius:5px;padding:5px 12px;min-width:70px;text-align:center;}
+
+/* ── SWIPE ── */
+#swipe-hint{
+  position:relative;z-index:10;margin-top:auto;margin-bottom:10px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  animation:spulse 2.2s ease-in-out infinite;
+}
+.swipe-line{width:48px;height:3px;background:var(--cyan);
+  border-radius:2px;box-shadow:var(--glow);}
+@keyframes spulse{0%,100%{opacity:.25}50%{opacity:.9}}
+</style>
+</head>
+<body>
+<div id="screen">
+  <div class="vignette"></div>
+  <!-- STATUS BAR -->
+  <div id="statusbar">
+    <div class="sb-left">
+      <span id="sb-net-badge" class="net-badge lte">4G</span>
+    </div>
+    <div class="sb-mid" id="sb-time">--:--</div>
+    <div class="sb-right">
+      <span class="batt-bolt" id="sb-bolt">⚡</span>
+      <span class="batt-pct" id="sb-batp">--%</span>
+      <div class="batt-shell" style="color:var(--cyan2)">
+        <div class="batt-fill" id="sb-batf" style="width:70%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ATTITUDE INDICATOR + COMPASS SIDE BY SIDE -->
+  <div id="attitude-wrap">
+    <!-- LEFT: Attitude Indicator -->
+    <div id="ai-section">
+      <div id="ai-container">
+        <div id="ai-horizon">
+          <div class="ai-sky"></div>
+          <div class="ai-ground"></div>
+          <div class="ai-horizon-line"></div>
+          <svg class="ai-pitch-lines" viewBox="0 0 155 310" xmlns="http://www.w3.org/2000/svg">
+            <line x1="45" y1="124" x2="110" y2="124" stroke="rgba(0,245,255,0.4)" stroke-width="1"/>
+            <line x1="55" y1="108" x2="100" y2="108" stroke="rgba(0,245,255,0.2)" stroke-width="0.8"/>
+            <line x1="45" y1="186" x2="110" y2="186" stroke="rgba(255,106,0,0.4)" stroke-width="1"/>
+            <line x1="55" y1="202" x2="100" y2="202" stroke="rgba(255,106,0,0.2)" stroke-width="0.8"/>
+            <text x="42" y="128" fill="rgba(0,245,255,0.5)" font-size="7" font-family="'Share Tech Mono'" text-anchor="end">10</text>
+            <text x="42" y="190" fill="rgba(255,106,0,0.5)" font-size="7" font-family="'Share Tech Mono'" text-anchor="end">-10</text>
+          </svg>
+        </div>
+        <div id="ai-overlay">
+          <svg id="ai-roll-ring" viewBox="0 0 155 155" xmlns="http://www.w3.org/2000/svg">
+            <path d="M25,77 A52,52 0 0,1 130,77" fill="none" stroke="rgba(0,245,255,0.35)" stroke-width="1.5"/>
+            <g stroke="rgba(0,245,255,0.5)" stroke-width="1.2">
+              <line x1="77" y1="27" x2="77" y2="20"/>
+              <line x1="47" y1="35" x2="43" y2="29"/>
+              <line x1="25" y1="57" x2="20" y2="53"/>
+              <line x1="107" y1="35" x2="111" y2="29"/>
+              <line x1="129" y1="57" x2="134" y2="53"/>
+            </g>
+            <polygon id="roll-ptr" points="77,31 73,39 81,39" fill="var(--orange)" filter="url(#og)"/>
+            <g id="ai-reticle-g" filter="url(#cg)">
+              <line x1="48" y1="77" x2="63" y2="77" stroke="var(--gold)" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="92" y1="77" x2="107" y2="77" stroke="var(--gold)" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="71" y1="77" x2="84" y2="77" stroke="var(--gold)" stroke-width="1.5"/>
+              <circle cx="77" cy="77" r="3" fill="none" stroke="var(--gold)" stroke-width="1.5"/>
+            </g>
+            <defs>
+              <filter id="cg"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              <filter id="og"><feGaussianBlur stdDeviation="1" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            </defs>
+          </svg>
+        </div>
+      </div>
+      <div id="axis-bars">
+        <div class="axis-bar-wrap x">
+          <div class="axis-label">X</div>
+          <div class="axis-track"><div class="axis-fill" id="ax-x" style="width:50%"></div></div>
+          <div class="axis-val" id="av-x">0.00</div>
+        </div>
+        <div class="axis-bar-wrap y">
+          <div class="axis-label">Y</div>
+          <div class="axis-track"><div class="axis-fill" id="ax-y" style="width:50%"></div></div>
+          <div class="axis-val" id="av-y" style="color:var(--gold);text-shadow:0 0 6px var(--gold)">0.00</div>
+        </div>
+        <div class="axis-bar-wrap z">
+          <div class="axis-label">Z</div>
+          <div class="axis-track"><div class="axis-fill" id="ax-z" style="width:50%"></div></div>
+          <div class="axis-val" id="av-z" style="color:var(--orange);text-shadow:0 0 6px var(--orange)">0.00</div>
+        </div>
+      </div>
+      <div class="ai-section-label">ATTITUDE</div>
+    </div>
+    <!-- RIGHT: Compass Dial -->
+    <div id="compass-section">
+      <div id="compass-container">
+        <svg id="compass-svg" viewBox="0 0 155 155" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id="cglow"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <filter id="nglow"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+          <!-- outer ring -->
+          <circle cx="77" cy="77" r="72" fill="none" stroke="rgba(0,245,255,0.2)" stroke-width="1"/>
+          <!-- inner bg -->
+          <circle cx="77" cy="77" r="65" fill="rgba(0,8,20,0.8)"/>
+          <!-- tick marks + cardinal labels built by JS -->
+          <g id="c-ticks"></g>
+          <g id="c-labels"></g>
+          <!-- dashed inner ring -->
+          <circle cx="77" cy="77" r="52" fill="none" stroke="rgba(0,245,255,0.1)" stroke-width="1" stroke-dasharray="3 4"/>
+          <!-- needle group — rotated by JS -->
+          <g id="compass-needle" transform="rotate(0,77,77)">
+            <polygon points="77,14 73,77 77,85 81,77" fill="#00f5ff" filter="url(#nglow)"/>
+            <polygon points="77,140 73,77 77,69 81,77" fill="rgba(255,106,0,0.85)"/>
+            <circle cx="77" cy="77" r="5" fill="rgba(0,245,255,0.2)" stroke="#00f5ff" stroke-width="1.5"/>
+          </g>
+          <!-- bearing text -->
+          <text id="c-bearing" x="77" y="103" font-family="'Orbitron',monospace" font-size="11" font-weight="700" fill="#00f5ff" text-anchor="middle" filter="url(#cglow)">000°</text>
+          <text id="c-dir" x="77" y="114" font-family="'Orbitron',monospace" font-size="8" fill="rgba(0,245,255,0.6)" text-anchor="middle">N</text>
+        </svg>
+      </div>
+      <div id="compass-bearing-big" id="c-big">---° --</div>
+      <div id="compass-status">SIM</div>
+    </div>
+  </div>
+
+  <!-- CLOCK -->
+  <div id="clock-wrap">
+    <div id="ls-time">--:--</div>
+    <div id="ls-date">--- -- · -------</div>
+  </div>
+  <div class="ls-div"></div>
+
+  <!-- PROGRESS + COUNTDOWN (moved above panels) -->
+  <div id="progress-wrap">
+    <div class="prog-block">
+      <div class="prog-top"><span id="pg-pct">--.-%</span><span id="pg-yr">----</span></div>
+      <div class="prog-bar"><div class="prog-fill" id="pg-fill" style="width:0%"></div></div>
+      <div class="prog-bot"><span id="pg-day">---</span><span id="pg-rem">---</span><span id="pg-hrs">---</span></div>
+    </div>
+    <div class="prog-block">
+      <div class="countdown-row">
+        <div class="cd-box" id="cd-h">--</div>
+        <div class="cd-box" id="cd-m">--</div>
+        <div class="cd-box" id="cd-s">--</div>
+      </div>
+    </div>
+  </div>
+  <div class="ls-div"></div>
+
+  <!-- DATA PANELS ROW 1: WEATHER + NETWORK -->
+  <div id="panels-row1" class="panels-row">
+    <div class="panel gold" style="flex:1.3">
+      <div class="panel-title gold-t">◈ TEMP</div>
+      <div class="panel-val gold-v" id="p-temp">--°C / --°F</div>
+      <div class="panel-sub gold-s" id="p-weather-desc">FETCHING...</div>
+      <div class="panel-sub gold-s" id="p-feels">FEELS --°C / --°F</div>
+    </div>
+    <div class="panel orange">
+      <div class="panel-title org-t">◈ NETWORK</div>
+      <div class="panel-val org-v" id="p-net">--</div>
+      <div class="panel-sub org-s" id="p-wifi-ssid">--</div>
+      <div class="panel-sub org-s" id="p-wifi-type"></div>
+    </div>
+  </div>
+
+  <!-- DATA PANELS ROW 2: GPS + CONDITIONS -->
+  <div id="panels-row2" class="panels-row" style="margin-top:8px">
+    <div class="panel blue" style="flex:1.4">
+      <div class="panel-title blue-t">◈ LOCATION</div>
+      <div class="panel-val blue-v" id="p-lat">---.------</div>
+      <div class="panel-val blue-v" id="p-lon" style="font-size:clamp(11px,3vw,14px)">---.------</div>
+      <div class="panel-sub blue-s" id="p-gps-acc">GPS --</div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">◈ CONDITIONS</div>
+      <div class="panel-val" id="p-humidity">HUM --%</div>
+      <div class="panel-val" id="p-wind" style="font-size:clamp(11px,3vw,14px)">WIND -- km/h</div>
+      <div class="panel-sub" id="p-wind-dir">DIR --°</div>
+    </div>
+  </div>
+
+  <!-- SWIPE HINT -->
+  <div id="swipe-hint"><div class="swipe-line"></div></div>
+</div>
+<script>// ── PWA ──
+if('serviceWorker' in navigator){
+  const swCode=`const CACHE='tron-v2';self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['/']))));self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).catch(()=>caches.match('/')))));`;
+  const blob=new Blob([swCode],{type:'application/javascript'});
+  navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
+}
+
+// ── CONSTANTS ──
+const MONTHS=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+const DAYS=['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'];
+const CDIRS=['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+const WX_CODES={0:'CLEAR',1:'MAINLY CLEAR',2:'PARTLY CLOUDY',3:'OVERCAST',45:'FOGGY',48:'ICY FOG',51:'LIGHT DRIZZLE',53:'DRIZZLE',55:'HEAVY DRIZZLE',61:'LIGHT RAIN',63:'RAIN',65:'HEAVY RAIN',71:'LIGHT SNOW',73:'SNOW',75:'HEAVY SNOW',80:'RAIN SHOWERS',81:'SHOWERS',82:'HEAVY SHOWERS',95:'THUNDERSTORM',96:'T-STORM+HAIL',99:'HEAVY T-STORM'};
+const DEFAULT_LAT=18.5292169374585, DEFAULT_LON=73.86652481660472;
+
+// ── BUILD COMPASS TICKS ──
+(function(){
+  const ticks=document.getElementById('c-ticks');
+  const labels=document.getElementById('c-labels');
+  const cx=77,cy=77,outerR=70,longR=62,shortR=65,labelR=56;
+  const cards={0:'N',90:'E',180:'S',270:'W'};
+  const diags={45:'NE',135:'SE',225:'SW',315:'NW'};
+  for(let i=0;i<360;i+=5){
+    const rad=(i-90)*Math.PI/180;
+    const isCard=(i%90===0),isDiag=(i%45===0),isMajor=(i%10===0);
+    const r2=isCard?longR:isDiag?longR+2:isMajor?shortR+1:shortR+3;
+    const x1=cx+outerR*Math.cos(rad),y1=cy+outerR*Math.sin(rad);
+    const x2=cx+r2*Math.cos(rad),y2=cy+r2*Math.sin(rad);
+    const ln=document.createElementNS('http://www.w3.org/2000/svg','line');
+    ln.setAttribute('x1',x1.toFixed(1));ln.setAttribute('y1',y1.toFixed(1));
+    ln.setAttribute('x2',x2.toFixed(1));ln.setAttribute('y2',y2.toFixed(1));
+    ln.setAttribute('stroke',isCard?'#00f5ff':isDiag?'rgba(0,245,255,0.6)':'rgba(0,245,255,0.25)');
+    ln.setAttribute('stroke-width',isCard?'2':isDiag?'1.5':'0.8');
+    ticks.appendChild(ln);
+    if(cards[i]||diags[i]){
+      const lx=cx+(labelR-(isCard?3:1))*Math.cos(rad),ly=cy+(labelR-(isCard?3:1))*Math.sin(rad)+3;
+      const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('x',lx.toFixed(1));t.setAttribute('y',ly.toFixed(1));
+      t.setAttribute('font-family',"'Orbitron',monospace");
+      t.setAttribute('font-size',isCard?'10':'7');
+      t.setAttribute('font-weight',isCard?'700':'400');
+      t.setAttribute('fill',isCard?'#00f5ff':'rgba(0,245,255,0.55)');
+      t.setAttribute('text-anchor','middle');
+      t.textContent=cards[i]||diags[i];
+      labels.appendChild(t);
+    }
+  }
+})();
+
+// ── COMPASS ──
+let simAngle=0,usingRealCompass=false;
+const cNeedle=document.getElementById('compass-needle');
+const cBearing=document.getElementById('c-bearing');
+const cDir=document.getElementById('c-dir');
+const cStatus=document.getElementById('compass-status');
+const cBig=document.getElementById('compass-bearing-big');
+
+function updateCompass(deg){
+  deg=((deg%360)+360)%360;
+  cNeedle.setAttribute('transform',`rotate(${-deg},77,77)`);
+  const bearStr=String(Math.round(deg)).padStart(3,'0')+'°';
+  const dirStr=CDIRS[Math.round(deg/22.5)%16];
+  cBearing.textContent=bearStr;
+  cDir.textContent=dirStr;
+  cBig.textContent=bearStr+' '+dirStr;
+}
+
+function onAbsolute(e){
+  if(!e.isTrusted) return;
+  let h=null;
+  if(e.webkitCompassHeading!=null&&!isNaN(e.webkitCompassHeading)) h=e.webkitCompassHeading;
+  else if(e.alpha!=null&&!isNaN(e.alpha)) h=(360-e.alpha+360)%360;
+  if(h!==null){usingRealCompass=true;cStatus.textContent='LIVE';cStatus.style.color='var(--cyan)';updateCompass(h);}
+}
+function onRelative(e){
+  if(usingRealCompass) return;
+  if(e.webkitCompassHeading!=null&&!isNaN(e.webkitCompassHeading)){usingRealCompass=true;cStatus.textContent='LIVE';cStatus.style.color='var(--cyan)';updateCompass(e.webkitCompassHeading);}
+}
+
+if(typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientationEvent.requestPermission==='function'){
+  const btn=document.createElement('button');
+  btn.textContent='⬡ ENABLE COMPASS';
+  btn.style.cssText='position:fixed;bottom:20px;right:20px;z-index:9999;font-family:Orbitron,monospace;font-size:11px;letter-spacing:3px;color:#00f5ff;background:rgba(0,0,8,0.95);border:1px solid rgba(0,245,255,0.5);padding:10px 14px;border-radius:6px;cursor:pointer;';
+  btn.onclick=()=>{DeviceOrientationEvent.requestPermission().then(s=>{if(s==='granted'){window.addEventListener('deviceorientationabsolute',onAbsolute,true);window.addEventListener('deviceorientation',onRelative,true);}btn.remove();}).catch(()=>btn.remove());};
+  document.body.appendChild(btn);
+}else if(typeof DeviceOrientationEvent!=='undefined'){
+  window.addEventListener('deviceorientationabsolute',onAbsolute,true);
+  window.addEventListener('deviceorientation',onRelative,true);
+}
+setInterval(()=>{if(!usingRealCompass){simAngle=(simAngle+0.35)%360;updateCompass(simAngle);}},30);
+
+// ── ATTITUDE INDICATOR ──
+let pitch=0,roll=0,gx=0,gy=0,gz=0;
+const horizon=document.getElementById('ai-horizon');
+const rollPtr=document.getElementById('roll-ptr');
+const axX=document.getElementById('ax-x'),axY=document.getElementById('ax-y'),axZ=document.getElementById('ax-z');
+const avX=document.getElementById('av-x'),avY=document.getElementById('av-y'),avZ=document.getElementById('av-z');
+
+function updateAI(p,r,ax,ay,az){
+  horizon.style.transform=`translateY(${p*5}px) rotate(${r}deg)`;
+  const rad=(r-90)*Math.PI/180;
+  const px=77+44*Math.cos(rad),py=77+44*Math.sin(rad);
+  rollPtr.setAttribute('transform',`translate(${px-77},${py-31}) rotate(${r},77,35)`);
+  const toW=v=>Math.min(100,Math.max(0,(v/20+0.5)*100));
+  axX.style.width=toW(ax)+'%';avX.textContent=ax.toFixed(2);
+  axY.style.width=toW(ay)+'%';avY.textContent=ay.toFixed(2);
+  axZ.style.width=toW(az)+'%';avZ.textContent=az.toFixed(2);
+  axX.style.background=Math.abs(ax)>7?'var(--red)':Math.abs(ax)>4?'var(--orange)':'var(--cyan)';
+  axY.style.background=Math.abs(ay)>7?'var(--red)':Math.abs(ay)>4?'var(--orange)':'var(--gold)';
+}
+
+function onOrientation(e){if(e.beta!==null)pitch=e.beta;if(e.gamma!==null)roll=e.gamma;updateAI(pitch,roll,gx,gy,gz);}
+function onMotion(e){const a=e.accelerationIncludingGravity||e.acceleration;if(a){gx=a.x||0;gy=a.y||0;gz=a.z||0;}updateAI(pitch,roll,gx,gy,gz);}
+
+if(typeof DeviceMotionEvent!=='undefined'&&typeof DeviceMotionEvent.requestPermission==='function'){
+  DeviceMotionEvent.requestPermission().then(s=>{if(s==='granted')window.addEventListener('devicemotion',onMotion,true);}).catch(()=>{});
+}else if(typeof DeviceMotionEvent!=='undefined') window.addEventListener('devicemotion',onMotion,true);
+
+if(typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientationEvent.requestPermission==='function'){
+  DeviceOrientationEvent.requestPermission().then(s=>{if(s==='granted')window.addEventListener('deviceorientation',onOrientation,true);}).catch(()=>{});
+}else if(typeof DeviceOrientationEvent!=='undefined') window.addEventListener('deviceorientation',onOrientation,true);
+
+// ── CLOCK ──
+function getDOY(d){return Math.floor((d-new Date(d.getFullYear(),0,0))/864e5);}
+function tick(){
+  const now=new Date();
+  const hh=String(now.getHours()).padStart(2,'0'),mm=String(now.getMinutes()).padStart(2,'0');
+  const ts=hh+':'+mm;
+  document.getElementById('ls-time').textContent=ts;
+  document.getElementById('sb-time').textContent=ts;
+  document.getElementById('ls-date').textContent=MONTHS[now.getMonth()]+' '+String(now.getDate()).padStart(2,'0')+' · '+DAYS[now.getDay()];
+  const yr=now.getFullYear(),yS=new Date(yr,0,1),yE=new Date(yr+1,0,1);
+  const pct=((now-yS)/(yE-yS)*100).toFixed(1);
+  document.getElementById('pg-pct').textContent=pct+'%';
+  document.getElementById('pg-yr').textContent=yr;
+  document.getElementById('pg-fill').style.width=pct+'%';
+  document.getElementById('pg-day').textContent='D'+getDOY(now);
+  document.getElementById('pg-rem').textContent=Math.floor((yE-now)/864e5)+'D';
+  document.getElementById('pg-hrs').textContent=Math.floor((yE-now)/36e5)+'H';
+  const mid=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1),diff=mid-now;
+  document.getElementById('cd-h').textContent=String(Math.floor(diff/36e5)).padStart(2,'0');
+  document.getElementById('cd-m').textContent=String(Math.floor(diff/6e4)%60).padStart(2,'0');
+  document.getElementById('cd-s').textContent=String(Math.floor(diff/1e3)%60).padStart(2,'0');
+  // Battery with charging detection
+  if(navigator.getBattery) navigator.getBattery().then(b=>{
+    const p=Math.round(b.level*100);
+    document.getElementById('sb-batp').textContent=p+'%';
+    const fill=document.getElementById('sb-batf');
+    fill.style.width=p+'%';
+    const bolt=document.getElementById('sb-bolt');
+    if(b.charging){fill.className='batt-fill charging';bolt.className='batt-bolt show';}
+    else if(p<=20){fill.className='batt-fill low';bolt.className='batt-bolt';}
+    else{fill.className='batt-fill';bolt.className='batt-bolt';}
+  });
+}
+setInterval(tick,1000);tick();
+
+// ── NETWORK — improved detection ──
+function updateNetwork(){
+  const conn=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+  const badge=document.getElementById('sb-net-badge');
+  const pNet=document.getElementById('p-net');
+  const pSsid=document.getElementById('p-wifi-ssid');
+  const pType=document.getElementById('p-wifi-type');
+  if(!navigator.onLine){
+    badge.textContent='OFFLINE';badge.className='net-badge off';
+    pNet.textContent='OFFLINE';pSsid.textContent='NO CONNECTION';pType.textContent='';return;
+  }
+  if(conn){
+    const type=conn.type||'';          // 'wifi','cellular','ethernet','none','unknown'
+    const eff=conn.effectiveType||'';  // '4g','3g','2g','slow-2g'
+    const dl=conn.downlink!=null?conn.downlink.toFixed(1)+' Mbps':'';
+    const rtt=conn.rtt!=null?conn.rtt+'ms':'';
+    const isWifi=(type==='wifi'||type==='ethernet');
+    const isCellular=(type==='cellular'||type==='');
+    if(isWifi){
+      badge.textContent='WIFI';badge.className='net-badge wifi';
+      pNet.textContent='WI-FI';
+      pSsid.textContent=dl?'↓ '+dl:'CONNECTED';
+      pType.textContent=type.toUpperCase()+(rtt?' · RTT '+rtt:'');
+    } else {
+      // Cellular — map effectiveType to real label
+      // Note: browsers report effectiveType based on speed, not tower generation
+      // We prioritise 'type' hint then effectiveType
+      let label='MOBILE';
+      if(eff==='4g') label='4G LTE';
+      else if(eff==='3g') label='3G';
+      else if(eff==='2g'||eff==='slow-2g') label='2G';
+      // Override: if downlink > 20 Mbps it is very likely 4G/5G
+      if(conn.downlink>100) label='5G';
+      else if(conn.downlink>20) label='4G+';
+      badge.textContent=label.replace(' LTE','').replace('+','');
+      badge.className='net-badge lte';
+      pNet.textContent=label;
+      pSsid.textContent=dl?'↓ '+dl:'CELLULAR';
+      pType.textContent=rtt?'RTT '+rtt:'';
+    }
+  } else {
+    // API not supported — online but no conn info
+    badge.textContent='ONLINE';badge.className='net-badge wifi';
+    pNet.textContent='ONLINE';pSsid.textContent='';pType.textContent='';
+  }
+}
+updateNetwork();
+window.addEventListener('online',updateNetwork);
+window.addEventListener('offline',updateNetwork);
+if(navigator.connection) navigator.connection.addEventListener('change',updateNetwork);
+
+// ── GPS + WEATHER ──
+let activeLat=DEFAULT_LAT,activeLon=DEFAULT_LON;
+function fetchWeather(lat,lon){
+  fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,wind_direction_10m&wind_speed_unit=kmh&timezone=auto`)
+  .then(r=>r.json()).then(d=>{
+    const c=d.current;
+    const tc=c.temperature_2m.toFixed(1),tf=(c.temperature_2m*9/5+32).toFixed(1);
+    const fc=c.apparent_temperature.toFixed(1),ff=(c.apparent_temperature*9/5+32).toFixed(1);
+    document.getElementById('p-temp').textContent=tc+'°C / '+tf+'°F';
+    document.getElementById('p-feels').textContent='FEELS '+fc+'°C / '+ff+'°F';
+    document.getElementById('p-weather-desc').textContent=WX_CODES[c.weather_code]||'--';
+    document.getElementById('p-humidity').textContent='HUM '+c.relative_humidity_2m+'%';
+    document.getElementById('p-wind').textContent='WIND '+c.wind_speed_10m+' km/h';
+    document.getElementById('p-wind-dir').textContent='DIR '+c.wind_direction_10m+'°';
+  }).catch(()=>{document.getElementById('p-temp').textContent='ERR';document.getElementById('p-weather-desc').textContent='CHECK CONNECTION';});
+}
+function onGPS(pos){
+  activeLat=pos.coords.latitude;activeLon=pos.coords.longitude;
+  document.getElementById('p-lat').textContent=activeLat.toFixed(6);
+  document.getElementById('p-lon').textContent=activeLon.toFixed(6);
+  document.getElementById('p-gps-acc').textContent='±'+Math.round(pos.coords.accuracy||0)+'m';
+  fetchWeather(activeLat,activeLon);
+}
+function onGPSErr(){
+  document.getElementById('p-lat').textContent=DEFAULT_LAT.toFixed(6);
+  document.getElementById('p-lon').textContent=DEFAULT_LON.toFixed(6);
+  document.getElementById('p-gps-acc').textContent='DEFAULT';
+  fetchWeather(DEFAULT_LAT,DEFAULT_LON);
+}
+if('geolocation' in navigator){
+  navigator.geolocation.getCurrentPosition(onGPS,onGPSErr,{enableHighAccuracy:true,timeout:10000});
+  setInterval(()=>navigator.geolocation.getCurrentPosition(onGPS,onGPSErr,{enableHighAccuracy:false,timeout:8000}),600000);
+}else onGPSErr();</script>
+</body>
+</html>
