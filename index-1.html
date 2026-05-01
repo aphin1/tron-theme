@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<meta name="theme-color" content="#000408"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<title>TRON · LEGACY</title>
+<style>
+/* ── FONTS ── */
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
+/* ── TRON LEGACY PALETTE ── */
+:root{
+  --bg:#000408; --bg2:#010d14; --bg3:#020a10;
+  --cyan:#00f5ff; --cyan2:#00c8d7; --cyan3:#0af;
+  --orange:#ff6a00; --orange2:#ff9500;
+  --gold:#ffd000; --gold2:#ffaa00;
+  --blue:#0066ff; --blue2:#003ecc;
+  --purple:#7b00ff;
+  --red:#ff2200;
+  --white:#e8f4f8;
+  --dim:rgba(0,245,255,0.12);
+  --border:rgba(0,245,255,0.22);
+  --border2:rgba(0,245,255,0.07);
+  --glow:0 0 8px var(--cyan),0 0 22px rgba(0,245,255,0.3);
+  --oglow:0 0 8px var(--orange),0 0 20px rgba(255,106,0,0.35);
+  --gglow:0 0 8px var(--gold),0 0 20px rgba(255,208,0,0.3);
+  --fm:'Share Tech Mono',monospace;
+  --fo:'Orbitron',monospace;
+}
+/* ── RESET ── */
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);}
+body{font-family:var(--fm);color:var(--cyan);display:flex;align-items:center;justify-content:center;}
+/* ── SCREEN ── */
+#screen{
+  width:100vw;height:100vh;
+  background:var(--bg);
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;
+}
+/* ── GRID BG ── */
+#screen::before{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(var(--border2) 1px,transparent 1px),
+    linear-gradient(90deg,var(--border2) 1px,transparent 1px);
+  background-size:32px 32px;
+}
+/* ── SCANLINES ── */
+#screen::after{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:50;
+  background:repeating-linear-gradient(transparent 0 2px,rgba(0,0,0,0.1) 2px 4px);
+}
+/* ── VIGNETTE ── */
+.vignette{position:absolute;inset:0;pointer-events:none;z-index:49;
+  background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,0.75) 100%);}
+/* ── STATUSBAR ── */
+#statusbar{
+  position:relative;z-index:10;width:100%;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 18px 0;font-size:11px;color:var(--cyan2);letter-spacing:1px;
+}
+.sb-left,.sb-right{display:flex;align-items:center;gap:8px;}
+.sb-mid{font-family:var(--fo);font-size:12px;color:var(--cyan);letter-spacing:2px;}
+.net-badge{padding:2px 7px;border:1px solid var(--cyan2);border-radius:3px;
+  font-size:10px;letter-spacing:2px;color:var(--cyan2);}
+.net-badge.lte{border-color:var(--gold2);color:var(--gold2);}
+.net-badge.wifi{border-color:var(--cyan);color:var(--cyan);}
+.batt-shell{width:22px;height:11px;border:1.5px solid currentColor;border-radius:2px;
+  padding:1px;position:relative;display:inline-block;}
+.batt-shell::after{content:'';position:absolute;right:-4px;top:50%;
+  transform:translateY(-50%);width:3px;height:5px;background:currentColor;border-radius:0 1px 1px 0;}
+.batt-fill{height:100%;background:var(--cyan);border-radius:1px;box-shadow:0 0 4px var(--cyan);}
+
+/* ── ATTITUDE INDICATOR ── */
+#attitude-wrap{
+  position:relative;z-index:10;
+  width:100%;display:flex;flex-direction:column;align-items:center;
+  padding:6px 18px 0;gap:6px;
+}
+#ai-container{
+  width:180px;height:180px;position:relative;
+  border-radius:50%;overflow:hidden;
+  border:2px solid var(--border);
+  box-shadow:var(--glow),inset 0 0 30px rgba(0,245,255,0.05);
+}
+#ai-horizon{
+  position:absolute;width:100%;height:200%;
+  top:50%;left:0;
+  transform-origin:center top;
+  transition:transform 0.08s linear;
+}
+.ai-sky{
+  position:absolute;top:0;left:0;width:100%;height:50%;
+  background:linear-gradient(to bottom,#001a2e,#003355);
+}
+.ai-ground{
+  position:absolute;bottom:0;left:0;width:100%;height:50%;
+  background:linear-gradient(to bottom,#1a0a00,#0a0500);
+}
+.ai-horizon-line{
+  position:absolute;top:50%;left:0;width:100%;height:2px;
+  background:var(--orange);box-shadow:var(--oglow);
+  transform:translateY(-50%);
+}
+/* pitch lines on horizon */
+.ai-pitch-lines{position:absolute;top:0;left:0;width:100%;height:100%;}
+#ai-overlay{
+  position:absolute;inset:0;pointer-events:none;
+}
+#ai-roll-ring{
+  position:absolute;inset:0;
+}
+/* fixed aircraft reticle */
+#ai-reticle{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+}
+/* axis bars */
+#axis-bars{
+  width:100%;display:flex;justify-content:space-between;gap:8px;
+  padding:0 10px;
+}
+.axis-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.axis-label{font-size:9px;letter-spacing:3px;color:rgba(0,245,255,0.5);}
+.axis-track{width:100%;height:5px;background:rgba(0,245,255,0.08);
+  border-radius:3px;overflow:hidden;position:relative;}
+.axis-fill{height:100%;border-radius:3px;transition:width 0.08s,background 0.1s;}
+.axis-val{font-family:var(--fo);font-size:10px;color:var(--cyan);letter-spacing:1px;
+  text-shadow:0 0 6px var(--cyan);}
+.axis-bar-wrap.x .axis-fill{background:var(--cyan);}
+.axis-bar-wrap.y .axis-fill{background:var(--gold);}
+.axis-bar-wrap.z .axis-fill{background:var(--orange);}
+
+/* ── CLOCK ── */
+#clock-wrap{
+  position:relative;z-index:10;
+  text-align:center;padding:4px 18px 0;
+}
+#ls-time{
+  font-family:var(--fo);font-size:clamp(52px,14vw,82px);font-weight:900;
+  color:var(--cyan);text-shadow:var(--glow);letter-spacing:3px;line-height:1;
+}
+#ls-date{
+  font-family:var(--fo);font-size:clamp(10px,3vw,13px);
+  letter-spacing:4px;color:var(--cyan2);margin-top:4px;
+}
+.ls-div{width:calc(100% - 36px);height:1px;margin:8px 18px;
+  background:linear-gradient(90deg,transparent,var(--border),transparent);}
+
+/* ── PANELS ── */
+.panels-row{
+  position:relative;z-index:10;
+  width:100%;display:flex;gap:10px;padding:0 18px;
+}
+.panel{
+  flex:1;border:1px solid var(--border);
+  background:rgba(0,245,255,0.03);
+  border-radius:8px;padding:10px 12px;
+  display:flex;flex-direction:column;gap:5px;
+  position:relative;overflow:hidden;
+}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0.4;}
+.panel.gold{border-color:rgba(255,208,0,0.3);}
+.panel.gold::before{background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.panel.orange{border-color:rgba(255,106,0,0.3);}
+.panel.orange::before{background:linear-gradient(90deg,transparent,var(--orange),transparent);}
+.panel.blue{border-color:rgba(0,102,255,0.4);}
+.panel.blue::before{background:linear-gradient(90deg,transparent,var(--blue),transparent);}
+.panel-title{font-size:8px;letter-spacing:4px;color:rgba(0,245,255,0.4);
+  text-transform:uppercase;display:flex;align-items:center;gap:5px;}
+.panel-title.gold-t{color:rgba(255,208,0,0.5);}
+.panel-title.org-t{color:rgba(255,106,0,0.5);}
+.panel-title.blue-t{color:rgba(0,102,255,0.6);}
+.panel-val{font-family:var(--fo);font-size:clamp(13px,3.5vw,16px);
+  color:var(--cyan);text-shadow:0 0 8px var(--cyan);letter-spacing:1px;line-height:1.2;}
+.panel-val.gold-v{color:var(--gold);text-shadow:0 0 8px var(--gold);}
+.panel-val.org-v{color:var(--orange);text-shadow:0 0 8px var(--orange);}
+.panel-val.blue-v{color:var(--blue2);text-shadow:0 0 8px var(--blue);}
+.panel-sub{font-size:9px;color:rgba(0,245,255,0.35);letter-spacing:2px;line-height:1.4;}
+.panel-sub.gold-s{color:rgba(255,208,0,0.4);}
+.panel-sub.org-s{color:rgba(255,106,0,0.4);}
+.panel-sub.blue-s{color:rgba(0,102,255,0.5);}
+.refresh-btn{
+  background:none;border:1px solid var(--border);border-radius:4px;
+  color:rgba(0,245,255,0.4);font-size:8px;letter-spacing:2px;
+  padding:2px 6px;cursor:pointer;font-family:var(--fm);
+  transition:all .2s;margin-top:2px;align-self:flex-start;
+}
+.refresh-btn:active{background:rgba(0,245,255,0.1);color:var(--cyan);}
+
+/* ── PROGRESS + COUNTDOWN ── */
+#progress-wrap{
+  position:relative;z-index:10;
+  width:100%;padding:0 18px;display:flex;flex-direction:column;gap:8px;
+  margin-top:6px;
+}
+.prog-block{border:1px solid var(--border);background:rgba(0,245,255,0.02);
+  border-radius:8px;padding:10px 14px;position:relative;overflow:hidden;}
+.prog-block::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0.3;}
+.prog-top{display:flex;justify-content:space-between;
+  font-size:10px;color:var(--cyan2);letter-spacing:2px;margin-bottom:7px;}
+.prog-bar{width:100%;height:4px;background:rgba(0,245,255,0.08);
+  border-radius:2px;overflow:hidden;margin-bottom:7px;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--cyan2),var(--cyan));
+  box-shadow:0 0 8px var(--cyan);border-radius:2px;transition:width 1s;}
+.prog-bot{display:flex;justify-content:space-between;
+  font-size:10px;color:rgba(0,245,255,0.45);letter-spacing:2px;}
+.countdown-row{display:flex;justify-content:center;gap:10px;}
+.cd-box{font-family:var(--fo);font-size:clamp(18px,5vw,24px);font-weight:700;
+  color:var(--cyan);text-shadow:var(--glow);
+  background:rgba(0,245,255,0.05);border:1px solid var(--border);
+  border-radius:5px;padding:6px 14px;min-width:62px;text-align:center;}
+
+/* ── SWIPE ── */
+#swipe-hint{
+  position:relative;z-index:10;margin-top:auto;margin-bottom:12px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  animation:spulse 2.2s ease-in-out infinite;
+}
+.swipe-line{width:48px;height:3px;background:var(--cyan);
+  border-radius:2px;box-shadow:var(--glow);}
+@keyframes spulse{0%,100%{opacity:.25}50%{opacity:.9}}
+</style>
+</head>
+<body>
+<div id="screen">
+  <div class="vignette"></div>
+  <!-- STATUS BAR -->
+  <div id="statusbar">
+    <div class="sb-left">
+      <span id="sb-net-badge" class="net-badge lte">4G</span>
+      <span id="sb-wifi-icon" style="font-size:13px;opacity:0.5">▼</span>
+    </div>
+    <div class="sb-mid" id="sb-time">--:--</div>
+    <div class="sb-right">
+      <span id="sb-batp" style="font-size:10px;color:var(--cyan2)">--%</span>
+      <div class="batt-shell" style="color:var(--cyan2)">
+        <div class="batt-fill" id="sb-batf" style="width:70%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ATTITUDE INDICATOR -->
+  <div id="attitude-wrap">
+    <div id="ai-container">
+      <div id="ai-horizon">
+        <div class="ai-sky"></div>
+        <div class="ai-ground"></div>
+        <div class="ai-horizon-line"></div>
+        <!-- Pitch lines -->
+        <svg class="ai-pitch-lines" viewBox="0 0 180 360" xmlns="http://www.w3.org/2000/svg">
+          <line x1="55" y1="144" x2="125" y2="144" stroke="rgba(0,245,255,0.4)" stroke-width="1"/>
+          <line x1="65" y1="126" x2="115" y2="126" stroke="rgba(0,245,255,0.25)" stroke-width="0.8"/>
+          <line x1="55" y1="216" x2="125" y2="216" stroke="rgba(255,106,0,0.4)" stroke-width="1"/>
+          <line x1="65" y1="234" x2="115" y2="234" stroke="rgba(255,106,0,0.25)" stroke-width="0.8"/>
+          <text x="48" y="148" fill="rgba(0,245,255,0.5)" font-size="8" font-family="'Share Tech Mono'" text-anchor="end">10</text>
+          <text x="48" y="220" fill="rgba(255,106,0,0.5)" font-size="8" font-family="'Share Tech Mono'" text-anchor="end">-10</text>
+        </svg>
+      </div>
+      <!-- Fixed SVG overlay: roll arc + reticle -->
+      <div id="ai-overlay">
+        <svg id="ai-roll-ring" viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg">
+          <!-- roll arc -->
+          <path d="M30,90 A60,60 0 0,1 150,90" fill="none" stroke="rgba(0,245,255,0.35)" stroke-width="1.5"/>
+          <!-- roll tick marks -->
+          <g stroke="rgba(0,245,255,0.5)" stroke-width="1.2">
+            <line x1="90" y1="32" x2="90" y2="24"/>
+            <line x1="55" y1="41" x2="51" y2="34"/>
+            <line x1="30" y1="65" x2="24" y2="61"/>
+            <line x1="125" y1="41" x2="129" y2="34"/>
+            <line x1="150" y1="65" x2="156" y2="61"/>
+          </g>
+          <!-- roll indicator pointer — rotates with roll -->
+          <polygon id="roll-ptr" points="90,36 86,44 94,44" fill="var(--orange)" filter="url(#og)"/>
+          <!-- Aircraft reticle -->
+          <g id="ai-reticle-g" filter="url(#cg)">
+            <line x1="60" y1="90" x2="75" y2="90" stroke="var(--gold)" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="105" y1="90" x2="120" y2="90" stroke="var(--gold)" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="83" y1="90" x2="97" y2="90" stroke="var(--gold)" stroke-width="1.5"/>
+            <circle cx="90" cy="90" r="3" fill="none" stroke="var(--gold)" stroke-width="1.5"/>
+          </g>
+          <defs>
+            <filter id="cg"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <filter id="og"><feGaussianBlur stdDeviation="1" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+        </svg>
+      </div>
+    </div>
+    <!-- Axis bars -->
+    <div id="axis-bars">
+      <div class="axis-bar-wrap x">
+        <div class="axis-label">X</div>
+        <div class="axis-track"><div class="axis-fill" id="ax-x" style="width:50%"></div></div>
+        <div class="axis-val" id="av-x">0.00</div>
+      </div>
+      <div class="axis-bar-wrap y">
+        <div class="axis-label">Y</div>
+        <div class="axis-track"><div class="axis-fill" id="ax-y" style="width:50%"></div></div>
+        <div class="axis-val" id="av-y" style="color:var(--gold);text-shadow:0 0 6px var(--gold)">0.00</div>
+      </div>
+      <div class="axis-bar-wrap z">
+        <div class="axis-label">Z</div>
+        <div class="axis-track"><div class="axis-fill" id="ax-z" style="width:50%"></div></div>
+        <div class="axis-val" id="av-z" style="color:var(--orange);text-shadow:0 0 6px var(--orange)">0.00</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLOCK -->
+  <div id="clock-wrap">
+    <div id="ls-time">--:--</div>
+    <div id="ls-date">--- -- · -------</div>
+  </div>
+  <div class="ls-div"></div>
+
+  <!-- DATA PANELS ROW 1: WEATHER + NETWORK -->
+  <div id="panels-row1" class="panels-row">
+    <div class="panel gold" style="flex:1.3">
+      <div class="panel-title gold-t">◈ TEMP</div>
+      <div class="panel-val gold-v" id="p-temp">--°C / --°F</div>
+      <div class="panel-sub gold-s" id="p-weather-desc">FETCHING...</div>
+      <div class="panel-sub gold-s" id="p-feels">FEELS --°C</div>
+    </div>
+    <div class="panel orange">
+      <div class="panel-title org-t">◈ NETWORK</div>
+      <div class="panel-val org-v" id="p-net">--</div>
+      <div class="panel-sub org-s" id="p-wifi-ssid">SCANNING...</div>
+      <div class="panel-sub org-s" id="p-wifi-type"></div>
+    </div>
+  </div>
+
+  <!-- DATA PANELS ROW 2: GPS + WIND/HUMIDITY -->
+  <div id="panels-row2" class="panels-row" style="margin-top:8px">
+    <div class="panel blue" style="flex:1.4">
+      <div class="panel-title blue-t">◈ LOCATION</div>
+      <div class="panel-val blue-v" id="p-lat">---.------</div>
+      <div class="panel-val blue-v" id="p-lon" style="font-size:clamp(11px,3vw,13px)">---.------</div>
+      <div class="panel-sub blue-s" id="p-gps-acc">GPS --</div>
+    </div>
+    <div class="panel" style="flex:1">
+      <div class="panel-title">◈ CONDITIONS</div>
+      <div class="panel-val" id="p-humidity">HUM --%</div>
+      <div class="panel-val" id="p-wind" style="font-size:clamp(11px,3vw,13px)">WIND -- km/h</div>
+      <div class="panel-sub" id="p-wind-dir">DIR --°</div>
+    </div>
+  </div>
+
+  <!-- PROGRESS + COUNTDOWN -->
+  <div id="progress-wrap">
+    <div class="prog-block">
+      <div class="prog-top"><span id="pg-pct">--.-%</span><span id="pg-yr">----</span></div>
+      <div class="prog-bar"><div class="prog-fill" id="pg-fill" style="width:0%"></div></div>
+      <div class="prog-bot"><span id="pg-day">---</span><span id="pg-rem">---</span><span id="pg-hrs">---</span></div>
+    </div>
+    <div class="prog-block">
+      <div class="countdown-row">
+        <div class="cd-box" id="cd-h">--</div>
+        <div class="cd-box" id="cd-m">--</div>
+        <div class="cd-box" id="cd-s">--</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SWIPE HINT -->
+  <div id="swipe-hint"><div class="swipe-line"></div></div>
+</div>
+<script>// ── PWA SERVICE WORKER (inline blob) ──
+if('serviceWorker' in navigator){
+  const swCode=`
+    const CACHE='tron-v1';
+    const ASSETS=['/'];
+    self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))));
+    self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{
+      if(res.ok){const clone=res.clone();caches.open(CACHE).then(c=>c.put(e.request,clone));}
+      return res;
+    }).catch(()=>caches.match('/')))));
+  `;
+  const blob=new Blob([swCode],{type:'application/javascript'});
+  const swUrl=URL.createObjectURL(blob);
+  navigator.serviceWorker.register(swUrl).catch(()=>{});
+}
+
+// ── CONSTANTS ──
+const MONTHS=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+const DAYS=['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'];
+const WX_CODES={0:'CLEAR',1:'MAINLY CLEAR',2:'PARTLY CLOUDY',3:'OVERCAST',45:'FOGGY',48:'ICY FOG',
+  51:'LIGHT DRIZZLE',53:'DRIZZLE',55:'HEAVY DRIZZLE',61:'LIGHT RAIN',63:'RAIN',65:'HEAVY RAIN',
+  71:'LIGHT SNOW',73:'SNOW',75:'HEAVY SNOW',80:'RAIN SHOWERS',81:'SHOWERS',82:'HEAVY SHOWERS',
+  95:'THUNDERSTORM',96:'T-STORM+HAIL',99:'HEAVY T-STORM'};
+const DEFAULT_LAT=18.5292169374585, DEFAULT_LON=73.86652481660472;
+
+// ── GYROSCOPE / ATTITUDE INDICATOR ──
+let pitch=0,roll=0,gx=0,gy=0,gz=0;
+const horizon=document.getElementById('ai-horizon');
+const rollPtr=document.getElementById('roll-ptr');
+const axX=document.getElementById('ax-x'),axY=document.getElementById('ax-y'),axZ=document.getElementById('ax-z');
+const avX=document.getElementById('av-x'),avY=document.getElementById('av-y'),avZ=document.getElementById('av-z');
+
+function updateAI(p,r,ax,ay,az){
+  // Horizon: translate for pitch (7px per degree), rotate for roll
+  const pitchPx=p*7;
+  horizon.style.transform=`translateY(${pitchPx}px) rotate(${r}deg)`;
+  // Roll pointer rotates around the arc centre
+  const rad=(r-90)*Math.PI/180;
+  const cx=90,cy=90,arcR=52;
+  const px=cx+arcR*Math.cos(rad), py=cy+arcR*Math.sin(rad);
+  rollPtr.setAttribute('transform',`translate(${px-90},${py-36}) rotate(${r},90,40)`);
+  // Axis bars: map ±10 m/s² to 0–100%
+  const toW=v=>Math.min(100,Math.max(0,(v/20+0.5)*100));
+  axX.style.width=toW(ax)+'%'; avX.textContent=ax.toFixed(2);
+  axY.style.width=toW(ay)+'%'; avY.textContent=ay.toFixed(2);
+  axZ.style.width=toW(az)+'%'; avZ.textContent=az.toFixed(2);
+  // Axis fill colours based on intensity
+  const ci=v=>Math.abs(v)>7?'var(--red)':Math.abs(v)>4?'var(--orange)':'';
+  if(ci(ax)) axX.style.background=ci(ax);
+  if(ci(ay)) axY.style.background=ci(ay);
+}
+
+// DeviceMotion (Accelerometer + Gyroscope — works on G21 without magnetometer)
+function startMotion(){
+  if(typeof DeviceMotionEvent!=='undefined'&&typeof DeviceMotionEvent.requestPermission==='function'){
+    DeviceMotionEvent.requestPermission().then(s=>{
+      if(s==='granted') window.addEventListener('devicemotion',onMotion,true);
+    }).catch(()=>{});
+  } else if(typeof DeviceMotionEvent!=='undefined'){
+    window.addEventListener('devicemotion',onMotion,true);
+  }
+  // DeviceOrientation for pitch/roll angles
+  if(typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientationEvent.requestPermission==='function'){
+    DeviceOrientationEvent.requestPermission().then(s=>{
+      if(s==='granted') window.addEventListener('deviceorientation',onOrientation,true);
+    }).catch(()=>{});
+  } else if(typeof DeviceOrientationEvent!=='undefined'){
+    window.addEventListener('deviceorientation',onOrientation,true);
+  }
+}
+
+function onOrientation(e){
+  // beta = pitch (-180 to 180), gamma = roll (-90 to 90)
+  if(e.beta!==null) pitch=e.beta;
+  if(e.gamma!==null) roll=e.gamma;
+  updateAI(pitch,roll,gx,gy,gz);
+}
+
+function onMotion(e){
+  const a=e.accelerationIncludingGravity||e.acceleration;
+  if(a){ gx=a.x||0; gy=a.y||0; gz=a.z||0; }
+  updateAI(pitch,roll,gx,gy,gz);
+}
+
+startMotion();
+
+// ── CLOCK + DATE + PROGRESS ──
+function getDOY(d){return Math.floor((d-new Date(d.getFullYear(),0,0))/(864e5));}
+function tick(){
+  const now=new Date();
+  const hh=String(now.getHours()).padStart(2,'0');
+  const mm=String(now.getMinutes()).padStart(2,'0');
+  const timeStr=hh+':'+mm;
+  document.getElementById('ls-time').textContent=timeStr;
+  document.getElementById('sb-time').textContent=timeStr;
+  document.getElementById('ls-date').textContent=
+    MONTHS[now.getMonth()]+' '+String(now.getDate()).padStart(2,'0')+' · '+DAYS[now.getDay()];
+  // Year progress
+  const yr=now.getFullYear();
+  const yStart=new Date(yr,0,1),yEnd=new Date(yr+1,0,1);
+  const pct=((now-yStart)/(yEnd-yStart)*100).toFixed(1);
+  document.getElementById('pg-pct').textContent=pct+'%';
+  document.getElementById('pg-yr').textContent=yr;
+  document.getElementById('pg-fill').style.width=pct+'%';
+  const doy=getDOY(now);
+  const dRem=Math.floor((yEnd-now)/864e5);
+  const hRem=Math.floor((yEnd-now)/36e5);
+  document.getElementById('pg-day').textContent='D'+doy;
+  document.getElementById('pg-rem').textContent=dRem+'D';
+  document.getElementById('pg-hrs').textContent=hRem+'H';
+  // Today countdown
+  const midnight=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1);
+  const diff=midnight-now;
+  document.getElementById('cd-h').textContent=String(Math.floor(diff/36e5)).padStart(2,'0');
+  document.getElementById('cd-m').textContent=String(Math.floor(diff/6e4)%60).padStart(2,'0');
+  document.getElementById('cd-s').textContent=String(Math.floor(diff/1e3)%60).padStart(2,'0');
+  // Battery
+  if(navigator.getBattery) navigator.getBattery().then(b=>{
+    const p=Math.round(b.level*100);
+    document.getElementById('sb-batp').textContent=p+'%';
+    document.getElementById('sb-batf').style.width=p+'%';
+  });
+}
+setInterval(tick,1000); tick();
+
+// ── NETWORK STATUS ──
+function updateNetwork(){
+  const conn=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+  const badge=document.getElementById('sb-net-badge');
+  const pNet=document.getElementById('p-net');
+  const pSsid=document.getElementById('p-wifi-ssid');
+  const pType=document.getElementById('p-wifi-type');
+  const wifiIcon=document.getElementById('sb-wifi-icon');
+  if(!navigator.onLine){
+    badge.textContent='OFFLINE'; badge.className='net-badge';
+    pNet.textContent='OFFLINE'; return;
+  }
+  if(conn){
+    const t=conn.effectiveType||conn.type||'';
+    const dl=conn.downlink?conn.downlink+'Mbps':'';
+    if(t==='wifi'||t==='ethernet'){
+      badge.textContent='WIFI'; badge.className='net-badge wifi';
+      pNet.textContent='WI-FI';
+      pSsid.textContent=dl?'↓ '+dl:'CONNECTED';
+      pType.textContent=conn.type?conn.type.toUpperCase():'';
+      wifiIcon.textContent='▲'; wifiIcon.style.color='var(--cyan)'; wifiIcon.style.opacity='1';
+    } else {
+      const label=t==='4g'?'4G':t==='5g'?'5G':t==='3g'?'3G':t.toUpperCase()||'LTE';
+      badge.textContent=label; badge.className='net-badge lte';
+      pNet.textContent=label;
+      pSsid.textContent=dl?'↓ '+dl:'CELLULAR';
+      pType.textContent=conn.rtt?'RTT '+conn.rtt+'ms':'';
+      wifiIcon.textContent='▼'; wifiIcon.style.opacity='0.4';
+    }
+  } else {
+    badge.textContent='ONLINE'; badge.className='net-badge wifi';
+    pNet.textContent='ONLINE'; pSsid.textContent='';
+  }
+}
+updateNetwork();
+window.addEventListener('online',updateNetwork);
+window.addEventListener('offline',updateNetwork);
+if(navigator.connection) navigator.connection.addEventListener('change',updateNetwork);
+
+// ── GPS + WEATHER ──
+let activeLat=DEFAULT_LAT, activeLon=DEFAULT_LON;
+
+function fetchWeather(lat,lon){
+  const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,wind_direction_10m&wind_speed_unit=kmh&timezone=auto`;
+  fetch(url).then(r=>r.json()).then(data=>{
+    const c=data.current;
+    const tc=c.temperature_2m.toFixed(1);
+    const tf=(c.temperature_2m*9/5+32).toFixed(1);
+    const fc=c.apparent_temperature.toFixed(1);
+    const ff=(c.apparent_temperature*9/5+32).toFixed(1);
+    document.getElementById('p-temp').textContent=`${tc}°C / ${tf}°F`;
+    document.getElementById('p-feels').textContent=`FEELS ${fc}°C / ${ff}°F`;
+    document.getElementById('p-weather-desc').textContent=WX_CODES[c.weather_code]||'--';
+    document.getElementById('p-humidity').textContent='HUM '+c.relative_humidity_2m+'%';
+    document.getElementById('p-wind').textContent='WIND '+c.wind_speed_10m+' km/h';
+    document.getElementById('p-wind-dir').textContent='DIR '+c.wind_direction_10m+'°';
+  }).catch(()=>{
+    document.getElementById('p-temp').textContent='FETCH ERR';
+    document.getElementById('p-weather-desc').textContent='CHECK CONNECTION';
+  });
+}
+
+function onGPS(pos){
+  activeLat=pos.coords.latitude; activeLon=pos.coords.longitude;
+  const acc=pos.coords.accuracy?Math.round(pos.coords.accuracy)+'m':'--';
+  document.getElementById('p-lat').textContent=activeLat.toFixed(6);
+  document.getElementById('p-lon').textContent=activeLon.toFixed(6);
+  document.getElementById('p-gps-acc').textContent='±'+acc;
+  fetchWeather(activeLat,activeLon);
+}
+
+function onGPSError(){
+  document.getElementById('p-lat').textContent=DEFAULT_LAT.toFixed(6);
+  document.getElementById('p-lon').textContent=DEFAULT_LON.toFixed(6);
+  document.getElementById('p-gps-acc').textContent='DEFAULT';
+  fetchWeather(DEFAULT_LAT,DEFAULT_LON);
+}
+
+if('geolocation' in navigator){
+  navigator.geolocation.getCurrentPosition(onGPS,onGPSError,{enableHighAccuracy:true,timeout:10000});
+  // Refresh weather every 10 minutes
+  setInterval(()=>navigator.geolocation.getCurrentPosition(onGPS,onGPSError,{enableHighAccuracy:false,timeout:8000}),600000);
+} else { onGPSError(); }</script>
+</body>
+</html>
