@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Nokia G21 · TRON Theme Pack</title>
+<style>
+/* ── FONTS ── */
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
+/* ── VARIABLES ── */
+:root{
+  --bg:#000408;--bg2:#010d14;
+  --cyan:#00f5ff;--cyan2:#00c8d7;--cyan-dim:rgba(0,245,255,0.12);
+  --orange:#ff6600;--orange-dim:rgba(255,102,0,0.15);
+  --border:rgba(0,245,255,0.25);--border2:rgba(0,245,255,0.08);
+  --glow:0 0 8px #00f5ff,0 0 22px rgba(0,245,255,0.35);
+  --oglow:0 0 8px #ff6600,0 0 22px rgba(255,102,0,0.35);
+  --fm:'Share Tech Mono',monospace;--fo:'Orbitron',monospace;
+}
+/* ── RESET ── */
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#0a0a0a;display:flex;flex-wrap:wrap;justify-content:center;
+  gap:48px;padding:48px 24px;font-family:var(--fm);color:var(--cyan);}
+/* ── SECTION ── */
+.section-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;}
+.section-label{font-family:var(--fo);font-size:10px;letter-spacing:5px;
+  color:rgba(0,245,255,0.5);text-transform:uppercase;}
+/* ── SCREEN SHELL ── */
+.screen{width:390px;height:844px;background:var(--bg);position:relative;
+  overflow:hidden;border:1px solid var(--border);border-radius:20px;
+  box-shadow:var(--glow),inset 0 0 60px rgba(0,245,255,0.02);}
+.screen .scanlines{position:absolute;inset:0;pointer-events:none;z-index:50;
+  background:repeating-linear-gradient(transparent 0 2px,rgba(0,0,0,0.12) 2px 4px);}
+.screen .vignette{position:absolute;inset:0;pointer-events:none;z-index:49;
+  background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,0.6) 100%);}
+/* ── GRID BG ── */
+.gbg{position:absolute;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(var(--border2) 1px,transparent 1px),
+  linear-gradient(90deg,var(--border2) 1px,transparent 1px);
+  background-size:30px 30px;}
+/* ── WALLPAPER — STATIC LIGHTCYCLE SCENE ── */
+#wallpaper .wp-sun{position:absolute;width:200px;height:200px;border-radius:50%;
+  top:40%;left:50%;transform:translate(-50%,-50%);z-index:2;
+  background:radial-gradient(circle at 50% 55%,#ff8800 0%,#ff3300 40%,#990000 70%,#1a0000 100%);
+  box-shadow:0 0 40px #ff4400,0 0 80px rgba(255,80,0,0.25);}
+#wallpaper .wp-sun::after{content:'';position:absolute;inset:0;border-radius:50%;
+  background:repeating-linear-gradient(transparent 0 11px,rgba(0,0,0,0.88) 11px 15px);}
+#wallpaper .wp-horizon{position:absolute;top:50%;width:100%;height:2px;z-index:3;
+  background:linear-gradient(90deg,transparent 0%,var(--cyan) 15%,var(--cyan) 85%,transparent 100%);
+  box-shadow:0 0 10px var(--cyan),0 0 25px rgba(0,245,255,0.4);}
+#wallpaper .wp-floor{position:absolute;top:50%;bottom:0;width:100%;z-index:1;overflow:hidden;}
+#wallpaper .wp-floor-inner{width:100%;height:180%;
+  background:repeating-linear-gradient(to bottom,transparent 0 8%,rgba(0,245,255,0.16) 8% 9%);
+  transform:perspective(380px) rotateX(58deg);transform-origin:top center;}
+#wallpaper .wp-vert-lines{position:absolute;top:50%;bottom:0;width:100%;z-index:2;overflow:hidden;}
+#wallpaper .wp-vert-inner{width:100%;height:180%;
+  background:repeating-linear-gradient(90deg,transparent 0 9%,rgba(0,245,255,0.1) 9% 10%);
+  transform:perspective(380px) rotateX(58deg);transform-origin:top center;}
+#wallpaper .wp-logo{position:absolute;top:54%;width:100%;text-align:center;z-index:5;
+  font-family:var(--fo);font-size:50px;font-weight:900;letter-spacing:18px;
+  color:var(--cyan);text-shadow:0 0 10px #00f5ff,0 0 28px rgba(0,245,255,0.5);}
+#wallpaper .wp-corner{position:absolute;width:44px;height:44px;z-index:5;}
+#wallpaper .wp-corner.tl{top:14px;left:14px;border-top:2px solid rgba(0,245,255,0.45);border-left:2px solid rgba(0,245,255,0.45);}
+#wallpaper .wp-corner.tr{top:14px;right:14px;border-top:2px solid rgba(0,245,255,0.45);border-right:2px solid rgba(0,245,255,0.45);}
+#wallpaper .wp-corner.bl{bottom:14px;left:14px;border-bottom:2px solid rgba(0,245,255,0.45);border-left:2px solid rgba(0,245,255,0.45);}
+#wallpaper .wp-corner.br{bottom:14px;right:14px;border-bottom:2px solid rgba(0,245,255,0.45);border-right:2px solid rgba(0,245,255,0.45);}
+/* Lightcycle bodies */
+#wallpaper .lc{position:absolute;z-index:6;}
+/* White cycle — leading, front-center */
+#wallpaper .lc-white{bottom:28%;left:48%;}
+/* Blue cycle — mid-left */
+#wallpaper .lc-blue{bottom:22%;left:18%;}
+/* Red cycle — mid-right */
+#wallpaper .lc-red{bottom:22%;left:62%;}
+/* Jet walls — trailing lines behind each cycle */
+#wallpaper .jet{position:absolute;z-index:5;}
+#wallpaper .jet-white{bottom:28.8%;left:32%;width:16%;height:2px;
+  background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,0.9),#ffffff);
+  box-shadow:0 0 6px #fff,0 0 14px rgba(255,255,255,0.6);}
+#wallpaper .jet-white-v{bottom:28%;left:48%;width:2px;height:22%;
+  background:linear-gradient(to top,rgba(255,255,255,0),#ffffff);
+  box-shadow:0 0 6px #fff,0 0 12px rgba(255,255,255,0.5);}
+#wallpaper .jet-blue{bottom:23%;left:4%;width:15%;height:2px;
+  background:linear-gradient(90deg,rgba(0,200,255,0),rgba(0,200,255,0.85),#00ccff);
+  box-shadow:0 0 6px #00ccff,0 0 14px rgba(0,200,255,0.5);}
+#wallpaper .jet-blue-v{bottom:22%;left:18%;width:2px;height:18%;
+  background:linear-gradient(to top,rgba(0,200,255,0),#00ccff);
+  box-shadow:0 0 6px #00ccff,0 0 12px rgba(0,200,255,0.5);}
+#wallpaper .jet-red{bottom:23%;left:76%;width:14%;height:2px;
+  background:linear-gradient(90deg,#ff2200,rgba(255,34,0,0.85),rgba(255,34,0,0));
+  box-shadow:0 0 6px #ff2200,0 0 14px rgba(255,34,0,0.5);}
+#wallpaper .jet-red-v{bottom:22%;left:76%;width:2px;height:18%;
+  background:linear-gradient(to top,rgba(255,34,0,0),#ff2200);
+  box-shadow:0 0 6px #ff2200,0 0 12px rgba(255,34,0,0.5);}
+
+/* ── LOCKSCREEN ── */
+.ls-wrap{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;
+  align-items:center;padding:16px 18px 22px;}
+/* status */
+.ls-status{width:100%;display:flex;justify-content:space-between;align-items:center;
+  font-size:11px;color:var(--cyan2);letter-spacing:1px;}
+.battery{display:flex;align-items:center;gap:4px;}
+.batt-shell{width:24px;height:12px;border:1.5px solid var(--cyan2);border-radius:2px;
+  padding:1.5px;position:relative;}
+.batt-shell::after{content:'';position:absolute;right:-4px;top:50%;
+  transform:translateY(-50%);width:3px;height:6px;background:var(--cyan2);border-radius:0 1px 1px 0;}
+.batt-fill{height:100%;background:var(--cyan);border-radius:1px;box-shadow:0 0 4px var(--cyan);}
+/* compass */
+.ls-compass-ring{margin-top:8px;flex-shrink:0;}
+/* clock */
+.ls-clock{text-align:center;margin-top:4px;}
+.ls-time{font-family:var(--fo);font-size:80px;font-weight:900;line-height:1;
+  color:var(--cyan);text-shadow:var(--glow);letter-spacing:2px;animation:flicker 8s infinite;}
+.ls-date{font-family:var(--fo);font-size:13px;letter-spacing:6px;
+  color:var(--cyan2);margin-top:8px;}
+/* divider */
+.ls-div{width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);
+  margin:10px 0;}
+/* year progress */
+.ls-year{width:100%;padding:12px;border:1px solid var(--border);
+  background:rgba(0,245,255,0.03);border-radius:6px;}
+.ls-year-top{display:flex;justify-content:space-between;font-size:11px;color:var(--cyan2);letter-spacing:2px;margin-bottom:8px;}
+.ls-bar{width:100%;height:5px;background:rgba(0,245,255,0.1);border-radius:3px;overflow:hidden;margin-bottom:8px;}
+.ls-bar-fill{height:100%;background:linear-gradient(90deg,var(--cyan2),var(--cyan));
+  box-shadow:var(--glow);border-radius:3px;transition:width 1s;}
+.ls-year-bot{display:flex;justify-content:space-between;font-size:11px;color:var(--cyan2);letter-spacing:2px;}
+/* time remaining boxes */
+.ls-boxes{width:100%;display:flex;gap:8px;margin-top:10px;}
+.ls-box{flex:1;padding:10px 6px;border:1px solid var(--border);
+  background:rgba(0,245,255,0.04);border-radius:6px;text-align:center;}
+.ls-box-num{font-family:var(--fo);font-size:22px;font-weight:700;
+  color:var(--cyan);text-shadow:var(--glow);line-height:1;}
+/* swipe hint */
+.ls-swipe{margin-top:auto;animation:pulse 2.2s ease-in-out infinite;}
+.ls-swipe-line{width:50px;height:3px;background:var(--cyan);border-radius:2px;
+  box-shadow:var(--glow);margin:0 auto 8px;}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+
+/* ── ICON GRID ── */
+#icon-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;
+  width:420px;padding:28px;background:var(--bg);
+  border:1px solid var(--border);border-radius:16px;box-shadow:var(--glow);}
+.ic-item{display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;}
+.ic-frame{width:66px;height:66px;border-radius:18px;
+  border:1px solid rgba(0,245,255,0.35);
+  background:linear-gradient(135deg,rgba(0,245,255,0.1),rgba(0,245,255,0.02));
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;transition:all .25s;
+  box-shadow:inset 0 0 12px rgba(0,245,255,0.06);}
+.ic-frame::before{content:'';position:absolute;inset:0;
+  background-image:linear-gradient(rgba(0,245,255,0.06) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(0,245,255,0.06) 1px,transparent 1px);
+  background-size:11px 11px;}
+.ic-frame::after{content:'';position:absolute;top:0;left:-80%;
+  width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(0,245,255,0.15),transparent);
+  transition:.4s;}
+.ic-item:hover .ic-frame::after{left:140%;}
+.ic-item:hover .ic-frame{border-color:var(--cyan);box-shadow:var(--glow),inset 0 0 15px rgba(0,245,255,0.12);}
+.ic-frame.org{border-color:rgba(255,102,0,0.4);
+  background:linear-gradient(135deg,rgba(255,102,0,0.12),rgba(255,102,0,0.02));}
+.ic-item:hover .ic-frame.org{border-color:var(--orange);box-shadow:var(--oglow);}
+.ic-frame.mix{border-color:rgba(180,0,255,0.3);
+  background:linear-gradient(135deg,rgba(180,0,255,0.1),rgba(0,245,255,0.04));}
+.ic-frame svg{position:relative;z-index:2;}
+</style>
+</head>
+<body>
+
+<!-- WALLPAPER -->
+<div class="section-wrap">
+  <div class="section-label">◈ WALLPAPER</div>
+  <div class="screen" id="wallpaper">
+    <div class="gbg"></div>
+    <div class="wp-floor"><div class="wp-floor-inner"></div></div>
+    <div class="wp-vert-lines"><div class="wp-vert-inner"></div></div>
+    <div class="wp-sun"></div>
+    <div class="wp-horizon"></div>
+    <div class="wp-logo">TRON</div>
+    <div class="wp-corner tl"></div><div class="wp-corner tr"></div>
+    <div class="wp-corner bl"></div><div class="wp-corner br"></div>
+
+    <!-- JET WALLS -->
+    <div class="jet jet-white"></div>
+    <div class="jet jet-white-v"></div>
+    <div class="jet jet-blue"></div>
+    <div class="jet jet-blue-v"></div>
+    <div class="jet jet-red"></div>
+    <div class="jet jet-red-v"></div>
+
+    <!-- LIGHTCYCLE: WHITE (leading, front-center) -->
+    <div class="lc lc-white">
+      <svg width="62" height="28" viewBox="0 0 62 28" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="wglow"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <!-- body -->
+        <path d="M8 20 L4 14 L10 8 L46 8 L58 14 L54 20 Z" fill="rgba(255,255,255,0.08)" stroke="#ffffff" stroke-width="1.5" filter="url(#wglow)"/>
+        <!-- cockpit bubble -->
+        <path d="M32 8 L26 13 L38 13 Z" fill="rgba(255,255,255,0.25)" stroke="#ffffff" stroke-width="1"/>
+        <!-- engine stripe -->
+        <line x1="10" y1="14" x2="50" y2="14" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
+        <!-- wheels -->
+        <circle cx="14" cy="21" r="4" fill="none" stroke="#ffffff" stroke-width="1.5" filter="url(#wglow)"/>
+        <circle cx="48" cy="21" r="4" fill="none" stroke="#ffffff" stroke-width="1.5" filter="url(#wglow)"/>
+        <circle cx="14" cy="21" r="1.5" fill="#ffffff"/>
+        <circle cx="48" cy="21" r="1.5" fill="#ffffff"/>
+        <!-- glow trail front -->
+        <line x1="58" y1="14" x2="62" y2="14" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" filter="url(#wglow)"/>
+      </svg>
+    </div>
+
+    <!-- LIGHTCYCLE: BLUE (mid-left) -->
+    <div class="lc lc-blue">
+      <svg width="50" height="22" viewBox="0 0 50 22" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="bglow"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <path d="M6 16 L3 11 L8 6 L37 6 L47 11 L43 16 Z" fill="rgba(0,200,255,0.08)" stroke="#00ccff" stroke-width="1.4" filter="url(#bglow)"/>
+        <path d="M26 6 L21 10 L31 10 Z" fill="rgba(0,200,255,0.2)" stroke="#00ccff" stroke-width="0.8"/>
+        <line x1="8" y1="11" x2="40" y2="11" stroke="rgba(0,200,255,0.5)" stroke-width="0.8"/>
+        <circle cx="11" cy="17" r="3" fill="none" stroke="#00ccff" stroke-width="1.3" filter="url(#bglow)"/>
+        <circle cx="39" cy="17" r="3" fill="none" stroke="#00ccff" stroke-width="1.3" filter="url(#bglow)"/>
+        <circle cx="11" cy="17" r="1.2" fill="#00ccff"/>
+        <circle cx="39" cy="17" r="1.2" fill="#00ccff"/>
+        <line x1="47" y1="11" x2="50" y2="11" stroke="#00ccff" stroke-width="2" stroke-linecap="round" filter="url(#bglow)"/>
+      </svg>
+    </div>
+
+    <!-- LIGHTCYCLE: RED (mid-right) -->
+    <div class="lc lc-red">
+      <svg width="50" height="22" viewBox="0 0 50 22" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="rglow"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <path d="M6 16 L3 11 L8 6 L37 6 L47 11 L43 16 Z" fill="rgba(255,34,0,0.08)" stroke="#ff2200" stroke-width="1.4" filter="url(#rglow)"/>
+        <path d="M26 6 L21 10 L31 10 Z" fill="rgba(255,34,0,0.2)" stroke="#ff2200" stroke-width="0.8"/>
+        <line x1="8" y1="11" x2="40" y2="11" stroke="rgba(255,34,0,0.5)" stroke-width="0.8"/>
+        <circle cx="11" cy="17" r="3" fill="none" stroke="#ff2200" stroke-width="1.3" filter="url(#rglow)"/>
+        <circle cx="39" cy="17" r="3" fill="none" stroke="#ff2200" stroke-width="1.3" filter="url(#rglow)"/>
+        <circle cx="11" cy="17" r="1.2" fill="#ff2200"/>
+        <circle cx="39" cy="17" r="1.2" fill="#ff2200"/>
+        <line x1="47" y1="11" x2="50" y2="11" stroke="#ff2200" stroke-width="2" stroke-linecap="round" filter="url(#rglow)"/>
+      </svg>
+    </div>
+
+    <div class="scanlines"></div><div class="vignette"></div>
+  </div>
+</div>
+
+<!-- LOCKSCREEN -->
+<div class="section-wrap">
+  <div class="section-label">◈ LOCKSCREEN</div>
+  <div class="screen" id="lockscreen">
+    <div class="gbg"></div>
+    <div class="ls-wrap">
+      <!-- STATUS BAR -->
+      <div class="ls-status">
+        <span id="ls-sig">4G ●●●●</span>
+        <span id="ls-st">--:--</span>
+        <div class="battery">
+          <span id="ls-batp">--%</span>
+          <div class="batt-shell"><div class="batt-fill" id="ls-batf" style="width:75%"></div></div>
+        </div>
+      </div>
+      <!-- COMPASS -->
+      <div class="ls-compass-ring">
+        <svg id="compass-svg" width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+          <!-- outer ring -->
+          <circle cx="80" cy="80" r="74" fill="none" stroke="rgba(0,245,255,0.2)" stroke-width="1"/>
+          <!-- tick marks -->
+          <g id="ticks" stroke="rgba(0,245,255,0.35)" stroke-width="1"></g>
+          <!-- degree labels ring -->
+          <g id="deg-labels" font-family="'Share Tech Mono',monospace" font-size="7" fill="rgba(0,245,255,0.5)" text-anchor="middle"></g>
+          <!-- inner ring -->
+          <circle cx="80" cy="80" r="54" fill="none" stroke="rgba(0,245,255,0.12)" stroke-width="1" stroke-dasharray="3 4"/>
+          <!-- needle group — rotates -->
+          <g id="compass-needle" transform="rotate(0,80,80)">
+            <polygon points="80,14 76,80 80,88 84,80" fill="#00f5ff" filter="url(#cg)"/>
+            <polygon points="80,146 76,80 80,72 84,80" fill="rgba(255,102,0,0.9)"/>
+            <circle cx="80" cy="80" r="5" fill="rgba(0,245,255,0.3)" stroke="#00f5ff" stroke-width="1.5"/>
+          </g>
+          <!-- bearing display -->
+          <text id="compass-bearing" x="80" y="107" font-family="'Orbitron',monospace" font-size="11" font-weight="700" fill="#00f5ff" text-anchor="middle" filter="url(#cg)">000°</text>
+          <!-- direction label -->
+          <text id="compass-dir" x="80" y="119" font-family="'Orbitron',monospace" font-size="8" fill="rgba(0,245,255,0.6)" text-anchor="middle">N</text>
+          <!-- glow filter -->
+          <defs>
+            <filter id="cg" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="1.5" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+        </svg>
+      </div>
+      <!-- CLOCK -->
+      <div class="ls-clock">
+        <div class="ls-time" id="ls-time">--:--</div>
+        <div class="ls-date" id="ls-date">--- -- · ---</div>
+      </div>
+      <div class="ls-div"></div>
+      <!-- YEAR PROGRESS -->
+      <div class="ls-year">
+        <div class="ls-year-top">
+          <span id="ls-pct">--.-%</span>
+          <span id="ls-yr">----</span>
+        </div>
+        <div class="ls-bar"><div class="ls-bar-fill" id="ls-prog" style="width:0%"></div></div>
+        <div class="ls-year-bot">
+          <span id="ls-day">---</span>
+          <span id="ls-rem">---</span>
+        </div>
+      </div>
+      <!-- HOURS + MINS + SECS remaining today -->
+      <div class="ls-boxes">
+        <div class="ls-box"><div class="ls-box-num" id="cd-h">--</div></div>
+        <div class="ls-box"><div class="ls-box-num" id="cd-m">--</div></div>
+        <div class="ls-box"><div class="ls-box-num" id="cd-s">--</div></div>
+      </div>
+      <!-- SWIPE HINT -->
+      <div class="ls-swipe"><div class="ls-swipe-line"></div></div>
+    </div>
+    <div class="scanlines"></div><div class="vignette"></div>
+  </div>
+</div>
+
+<!-- ICON SET -->
+<div class="section-wrap">
+  <div class="section-label">◈ ICON SET</div>
+  <div id="icon-grid">
+<!-- ROW 1 -->
+<div class="ic-item"><div class="ic-frame"><!-- PHONE -->
+<svg width="36" height="36" viewBox="0 0 36 36"><path d="M10 6h6l2 6-3.5 2a14 14 0 006.5 6.5l2-3.5 6 2v6c0 2-2 4-4 3C10 24 6 12 7 8c-1-2 1-2 3-2z" fill="none" stroke="#00f5ff" stroke-width="1.8" stroke-linejoin="round"/></svg>
+</div></div>
+<div class="ic-item"><div class="ic-frame"><!-- SMS -->
+<svg width="36" height="36" viewBox="0 0 36 36"><rect x="5" y="8" width="26" height="17" rx="3" fill="none" stroke="#00f5ff" stroke-width="1.8"/><line x1="10" y1="14" x2="26" y2="14" stroke="#00f5ff" stroke-width="1.5"/><line x1="10" y1="19" x2="20" y2="19" stroke="#00f5ff" stroke-width="1.5"/><polyline points="10,25 10,30 16,25" fill="#00f5ff" stroke="none"/></svg>
+</div></div>
+<div class="ic-item"><div class="ic-frame"><!-- CAMERA -->
+<svg width="36" height="36" viewBox="0 0 36 36"><rect x="4" y="11" width="28" height="19" rx="3" fill="none" stroke="#00f5ff" stroke-width="1.8"/><circle cx="18" cy="21" r="5.5" fill="none" stroke="#00f5ff" stroke-width="1.8"/><circle cx="18" cy="21" r="2.5" fill="#00f5ff" opacity=".5"/><path d="M13 11l2-4h6l2 4" fill="none" stroke="#00f5ff" stroke-width="1.5"/><circle cx="27" cy="15" r="1.5" fill="#00f5ff"/></svg>
+</div></div>
+<div class="ic-item"><div class="ic-frame"><!-- GALLERY -->
+<svg width="36" height="36" viewBox="0 0 36 36"><rect x="4" y="8" width="28" height="20" rx="3" fill="none" stroke="#00f5ff" stroke-width="1.8"/><circle cx="12" cy="15" r="2.5" fill="#00f5ff" opacity=".6"/><polyline points="4,24 10,17 16,22 22,15 32,24" fill="none" stroke="#00f5ff" stroke-width="1.5"/></svg>
+</div></div>
+<!-- ROW 2 -->
+<div class="ic-item"><div class="ic-frame"><!-- BROWSER/CHROME -->
+<svg width="36" height="36" viewBox="0 0 36 36"><circle cx="18" cy="18" r="13" fill="none" stroke="#00f5ff" stroke-width="1.8"/><circle cx="18" cy="18" r="5" fill="none" stroke="#00f5ff" stroke-width="1.8"/><line x1="18" y1="5" x2="18" y2="13" stroke="#00f5ff" stroke-width="1.5"/><line x1="5" y1="18" x2="13" y2="18" stroke="#00f5ff" stroke-width="1.5"/><line x1="31" y1="18" x2="23" y2="18" stroke="#00f5ff" stroke-width="1.5"/><line x1="18" y1="23" x2="18" y2="31" stroke="#00f5ff" stroke-width="1.5"/></svg>
+</div></div>
+<div class="ic-item"><div class="ic-frame"><!-- SETTINGS -->
+<svg width="36" height="36" viewBox="0 0 36 36"><circle cx="18" cy="18" r="5" fill="none" stroke="#00f5ff" stroke-width="1.8"/><path d="M18 5v4M18 27v4M5 18h4M27 18h4M8.5 8.5l2.8 2.8M24.7 24.7l2.8 2.8M8.5 27.5l2.8-2.8M24.7 11.3l2.8-2.8" stroke="#00f5ff" stroke-width="1.8" stroke-linecap="round"/><circle cx="18" cy="18" r="9" fill="none" stroke="rgba(0,245,255,0.25)" stroke-width="1"/></svg>
+</div></div>
+<div class="ic-item"><div class="ic-frame"><!-- CALCULATOR -->
+<svg width="36" height="36" viewBox="0 0 36 36"><rect x="7" y="5" width="22" height="26" rx="3" fill="none" stroke="#00f5ff" stroke-width="1.8"/><rect x="10" y="8" width="16" height="7" rx="1.5" fill="rgba(0,245,255,0.15)" stroke="#00f5ff" stroke-width="1"/><circle cx="12" cy="20" r="2" fill="#00f5ff" opacity=".7"/><circle cx="18" cy="20" r="2" fill="#00f5ff" opacity=".7"/><circle cx="24" cy="20" r="2" fill="#00f5ff" opacity=".7"/><circle cx="12" cy="27" r="2" fill="#00f5ff" opacity=".7"/><circle cx="18" cy="27" r="2" fill="#00f5ff" opacity=".7"/><rect x="22" y="25" width="4" height="4" rx="1" fill="#ff6600" opacity=".9"/></svg>
+</div></div>
+<div class="ic-item"><div class="ic-frame"><!-- CONTACTS -->
+<svg width="36" height="36" viewBox="0 0 36 36"><circle cx="18" cy="14" r="5.5" fill="none" stroke="#00f5ff" stroke-width="1.8"/><path d="M6 30c0-7 24-7 24 0" fill="none" stroke="#00f5ff" stroke-width="1.8" stroke-linecap="round"/><line x1="4" y1="10" x2="7" y2="10" stroke="#00f5ff" stroke-width="1.5"/><line x1="4" y1="14" x2="7" y2="14" stroke="#00f5ff" stroke-width="1.5"/><line x1="4" y1="18" x2="7" y2="18" stroke="#00f5ff" stroke-width="1.5"/></svg>
+</div></div>
+<!-- ROW 3 -->
+<div class="ic-item"><div class="ic-frame org"><!-- GMAIL -->
+<svg width="36" height="36" viewBox="0 0 36 36"><rect x="5" y="10" width="26" height="18" rx="2" fill="none" stroke="#ff6600" stroke-width="1.8"/><polyline points="5,10 18,21 31,10" fill="none" stroke="#ff6600" stroke-width="1.8"/></svg>
+</div></div>
+<div class="ic-item"><div class="ic-frame org"><!-- OUTLOOK -->
+<svg width="36" height="36" viewBox="0 0 36 36"><rect x="4" y="10" width="18" height="16" rx="2" fill="none" stroke="#ff6600" stroke-width="1.8"/><circle cx="13" cy="18" r="4" fill="none" stroke="#ff6600" stroke-width="1.5"/><polyline points="22,10 22,14 32,10 32,26 22,22 22,26" fill="none" stroke="#ff6600" stroke-width="1.5"/></svg>
+</div></div>
+<div class="ic-item"><div class="ic-frame org"><!-- FACEBOOK -->
+<svg width="36" height="36" viewBox="0 0 36 36"><rect x="5" y="5" width="26" height="26" rx="5" fill="none" stroke="#ff6600" stroke-width="1.8"/><path d="M20 31v-9h3l.5-4H20v-2c0-1.1.3-2 2-2h2V10s-1.2-.2-3-.2c-3.1 0-5 1.9-5 5.3V18h-3v4h3v9z" fill="#ff6600" opacity=".8"/></svg>
+</div></div>
+<div class="ic-item"><div class="ic-frame org"><!-- FB LITE -->
+<svg width="36" height="36" viewBox="0 0 36 36"><rect x="5" y="5" width="26" height="26" rx="5" fill="none" stroke="#ff6600" stroke-width="1.8"/><path d="M20 31v-9h3l.5-4H20v-2c0-1.1.3-2 2-2h2V10s-1.2-.2-3-.2c-3.1 0-5 1.9-5 5.3V18h-3v4h3v9z" fill="none" stroke="#ff6600" stroke-width="1.4"/><text x="27" y="32" font-size="7" fill="#ff6600" font-family="'Share Tech Mono'" opacity=".9">L</text></svg>
+</div></div>
+<!-- ROW 4 -->
+<div class="ic-item"><div class="ic-frame"><!-- INSTAGRAM -->
+<svg width="36" height="36" viewBox="0 0 36 36"><rect x="5" y="5" width="26" height="26" rx="7" fill="none" stroke="#00f5ff" stroke-width="1.8"/><circle cx="18" cy="18" r="6.5" fill="none" stroke="#00f5ff" stroke-width="1.8"/><circle cx="25.5" cy="10.5" r="2" fill="#00f5ff"/></svg>
+</div></div>
+<div class="ic-item"><div class="ic-frame"><!-- WHATSAPP -->
+<svg width="36" height="36" viewBox="0 0 36 36"><circle cx="18" cy="18" r="13" fill="none" stroke="#00f5ff" stroke-width="1.8"/><path d="M11 25l1.5-4a8 8 0 111.5 1.5z" fill="none" stroke="#00f5ff" stroke-width="1.5"/><path d="M14 16s.5 1 1.5 2 2 1.5 2 1.5l1.5-1.5s.5-.5 1 0l2 2c.5.5 0 1 0 1s-1 2-3 1-4-3-5-5 0-3 0-3 .5-.5 1 0l2 2c.5.5 0 1 0 1z" fill="#00f5ff" opacity=".7"/></svg>
+</div></div>
+<div class="ic-item"><div class="ic-frame"><!-- MAPS -->
+<svg width="36" height="36" viewBox="0 0 36 36"><path d="M18 5C13.6 5 10 8.6 10 13c0 7 8 18 8 18s8-11 8-18c0-4.4-3.6-8-8-8z" fill="none" stroke="#00f5ff" stroke-width="1.8"/><circle cx="18" cy="13" r="3.5" fill="#00f5ff" opacity=".6"/></svg>
+</div></div>
+<div class="ic-item"><div class="ic-frame"><!-- CALENDAR -->
+<svg width="36" height="36" viewBox="0 0 36 36"><rect x="5" y="9" width="26" height="22" rx="3" fill="none" stroke="#00f5ff" stroke-width="1.8"/><line x1="5" y1="16" x2="31" y2="16" stroke="#00f5ff" stroke-width="1.5"/><line x1="12" y1="6" x2="12" y2="12" stroke="#00f5ff" stroke-width="1.8" stroke-linecap="round"/><line x1="24" y1="6" x2="24" y2="12" stroke="#00f5ff" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="22" r="1.5" fill="#00f5ff"/><circle cx="18" cy="22" r="1.5" fill="#00f5ff"/><circle cx="24" cy="22" r="1.5" fill="#00f5ff"/><circle cx="12" cy="27" r="1.5" fill="#00f5ff"/><circle cx="18" cy="27" r="1.5" fill="#00f5ff"/></svg>
+</div></div>
+<!-- ROW 5 -->
+<div class="ic-item"><div class="ic-frame"><!-- CLOCK/ALARM -->
+<svg width="36" height="36" viewBox="0 0 36 36"><circle cx="18" cy="19" r="12" fill="none" stroke="#00f5ff" stroke-width="1.8"/><line x1="18" y1="19" x2="18" y2="12" stroke="#00f5ff" stroke-width="2" stroke-linecap="round"/><line x1="18" y1="19" x2="24" y2="22" stroke="#00f5ff" stroke-width="2" stroke-linecap="round"/><line x1="9" y1="8" x2="12" y2="11" stroke="#00f5ff" stroke-width="1.8"/><line x1="27" y1="8" x2="24" y2="11" stroke="#00f5ff" stroke-width="1.8"/></svg>
+</div></div>
+<div class="ic-item"><div class="ic-frame"><!-- MUSIC -->
+<svg width="36" height="36" viewBox="0 0 36 36"><circle cx="12" cy="26" r="4" fill="none" stroke="#00f5ff" stroke-width="1.8"/><circle cx="25" cy="23" r="4" fill="none" stroke="#00f5ff" stroke-width="1.8"/><polyline points="16,26 16,9 29,6 29,23" fill="none" stroke="#00f5ff" stroke-width="1.8" stroke-linejoin="round"/></svg>
+</div></div>
+<div class="ic-item"><div class="ic-frame"><!-- FILES -->
+<svg width="36" height="36" viewBox="0 0 36 36"><path d="M8 5h12l8 8v18H8z" fill="none" stroke="#00f5ff" stroke-width="1.8" stroke-linejoin="round"/><polyline points="20,5 20,13 28,13" fill="none" stroke="#00f5ff" stroke-width="1.5"/><line x1="12" y1="20" x2="24" y2="20" stroke="#00f5ff" stroke-width="1.5"/><line x1="12" y1="25" x2="20" y2="25" stroke="#00f5ff" stroke-width="1.5"/></svg>
+</div></div>
+<div class="ic-item"><div class="ic-frame org"><!-- YOUTUBE -->
+<svg width="36" height="36" viewBox="0 0 36 36"><rect x="3" y="9" width="30" height="18" rx="6" fill="none" stroke="#ff6600" stroke-width="1.8"/><polygon points="14,13 14,23 25,18" fill="#ff6600" opacity=".8"/></svg>
+</div></div>
+<!-- ROW 6 -->
+<div class="ic-item"><div class="ic-frame"><!-- X / TWITTER -->
+<svg width="36" height="36" viewBox="0 0 36 36"><line x1="7" y1="7" x2="29" y2="29" stroke="#00f5ff" stroke-width="2.2" stroke-linecap="round"/><line x1="29" y1="7" x2="7" y2="29" stroke="#00f5ff" stroke-width="2.2" stroke-linecap="round"/><circle cx="18" cy="18" r="13" fill="none" stroke="rgba(0,245,255,0.2)" stroke-width="1"/></svg>
+</div></div>
+<div class="ic-item"><div class="ic-frame"><!-- SNAPCHAT -->
+<svg width="36" height="36" viewBox="0 0 36 36"><path d="M18 5c-4.4 0-7 3-7 7v2c-1 0-2.5.4-2.5 1.5s1 1.5 2 1.5c-.5 2-2 3-3.5 3.5.5.8 2 1 3 1.2.2.8.6 1.3 1.5 1.3.8 0 1.8-.4 3.5-.4s2.7.4 3.5.4c.9 0 1.3-.5 1.5-1.3 1-.2 2.5-.4 3-1.2-1.5-.5-3-1.5-3.5-3.5 1 0 2-.5 2-1.5S27.5 14 26.5 14v-2C26.5 8 24 5 18 5z" fill="none" stroke="#00f5ff" stroke-width="1.8" stroke-linejoin="round"/></svg>
+</div></div>
+<div class="ic-item"><div class="ic-frame"><!-- SPOTIFY -->
+<svg width="36" height="36" viewBox="0 0 36 36"><circle cx="18" cy="18" r="13" fill="none" stroke="#00f5ff" stroke-width="1.8"/><path d="M10 14c5-2 11-2 16 0" fill="none" stroke="#00f5ff" stroke-width="1.8" stroke-linecap="round"/><path d="M11 18.5c4-1.5 9-1.5 14 0" fill="none" stroke="#00f5ff" stroke-width="1.5" stroke-linecap="round"/><path d="M12.5 23c3-1 8-1 11 0" fill="none" stroke="#00f5ff" stroke-width="1.3" stroke-linecap="round"/></svg>
+</div></div>
+<div class="ic-item"><div class="ic-frame org"><!-- NETFLIX -->
+<svg width="36" height="36" viewBox="0 0 36 36"><path d="M11 5v20l5-14v14l5-20v26l-10-2V5z" fill="none" stroke="#ff6600" stroke-width="1.8" stroke-linejoin="round"/></svg>
+</div></div>
+<!-- ROW 7 -->
+<div class="ic-item"><div class="ic-frame"><!-- LINKEDIN -->
+<svg width="36" height="36" viewBox="0 0 36 36"><rect x="5" y="5" width="26" height="26" rx="5" fill="none" stroke="#00f5ff" stroke-width="1.8"/><rect x="9" y="15" width="4" height="12" fill="#00f5ff" opacity=".8"/><circle cx="11" cy="11" r="2" fill="#00f5ff"/><path d="M17 15v12M17 19c0-3 10-5 10 2v8" fill="none" stroke="#00f5ff" stroke-width="1.8" stroke-linecap="round"/></svg>
+</div></div>
+<div class="ic-item"><div class="ic-frame org"><!-- PLAY STORE -->
+<svg width="36" height="36" viewBox="0 0 36 36"><polygon points="7,5 7,31 31,18" fill="none" stroke="#ff6600" stroke-width="1.8" stroke-linejoin="round"/><polygon points="7,5 19,18 7,31" fill="rgba(255,102,0,0.12)"/></svg>
+</div></div>
+<div class="ic-item"><div class="ic-frame"><!-- WIFI/HOTSPOT -->
+<svg width="36" height="36" viewBox="0 0 36 36"><path d="M5 14c7.2-7.2 18.8-7.2 26 0" fill="none" stroke="#00f5ff" stroke-width="1.8" stroke-linecap="round"/><path d="M9 18c5-5 13-5 18 0" fill="none" stroke="#00f5ff" stroke-width="1.8" stroke-linecap="round"/><path d="M13 22c3-3 7-3 10 0" fill="none" stroke="#00f5ff" stroke-width="1.8" stroke-linecap="round"/><circle cx="18" cy="26" r="2.5" fill="#00f5ff"/></svg>
+</div></div>
+<div class="ic-item"><div class="ic-frame"><!-- TORCH/FLASHLIGHT -->
+<svg width="36" height="36" viewBox="0 0 36 36"><path d="M14 5h8l2 8H12z" fill="none" stroke="#00f5ff" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 13l-3 18h18l-3-18" fill="none" stroke="#00f5ff" stroke-width="1.8" stroke-linejoin="round"/><line x1="18" y1="13" x2="18" y2="31" stroke="rgba(0,245,255,0.3)" stroke-width="1"/><line x1="18" y1="3" x2="18" y2="5" stroke="#00f5ff" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="4" x2="14" y2="6" stroke="#00f5ff" stroke-width="1.5" stroke-linecap="round"/><line x1="24" y1="4" x2="22" y2="6" stroke="#00f5ff" stroke-width="1.5" stroke-linecap="round"/></svg>
+</div></div>
+  </div>
+</div>
+
+<script>
+// ── BUILD COMPASS TICKS & LABELS ──
+(function buildCompass(){
+  const ticks = document.getElementById('ticks');
+  const labels = document.getElementById('deg-labels');
+  const cx=80, cy=80, outerR=74, shortR=68, longR=64, labelR=58;
+  for(let i=0;i<360;i+=5){
+    const rad=(i-90)*Math.PI/180;
+    const isMain=(i%90===0), isMid=(i%45===0);
+    const r1=outerR, r2=isMain?longR-4:isMid?longR:shortR;
+    const x1=cx+r1*Math.cos(rad), y1=cy+r1*Math.sin(rad);
+    const x2=cx+r2*Math.cos(rad), y2=cy+r2*Math.sin(rad);
+    const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',x1.toFixed(2)); line.setAttribute('y1',y1.toFixed(2));
+    line.setAttribute('x2',x2.toFixed(2)); line.setAttribute('y2',y2.toFixed(2));
+    line.setAttribute('stroke-width', isMain?'2':isMid?'1.5':'0.8');
+    line.setAttribute('stroke', isMain?'#00f5ff':isMid?'rgba(0,245,255,0.6)':'rgba(0,245,255,0.3)');
+    ticks.appendChild(line);
+    if(i%90===0){
+      const dirs=['N','E','S','W'];
+      const idx=i/90;
+      const lx=cx+(labelR-4)*Math.cos(rad), ly=cy+(labelR-4)*Math.sin(rad)+3;
+      const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('x',lx.toFixed(2)); t.setAttribute('y',ly.toFixed(2));
+      t.setAttribute('font-family',"'Orbitron',monospace");
+      t.setAttribute('font-size','10'); t.setAttribute('font-weight','700');
+      t.setAttribute('fill','#00f5ff'); t.setAttribute('text-anchor','middle');
+      t.textContent=dirs[idx]; labels.appendChild(t);
+    } else if(i%45===0){
+      const diagDirs=['NE','SE','SW','NW'];
+      const idx=i/45-1;
+      const lx=cx+(labelR-2)*Math.cos(rad), ly=cy+(labelR-2)*Math.sin(rad)+3;
+      const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('x',lx.toFixed(2)); t.setAttribute('y',ly.toFixed(2));
+      t.setAttribute('font-size','7'); t.setAttribute('fill','rgba(0,245,255,0.55)');
+      t.setAttribute('text-anchor','middle'); t.textContent=diagDirs[idx]; labels.appendChild(t);
+    }
+  }
+})();
+
+// ── COMPASS LOGIC ──
+let simAngle=0, usingRealCompass=false, lastHeading=0;
+const needle=document.getElementById('compass-needle');
+const bearingTxt=document.getElementById('compass-bearing');
+const dirTxt=document.getElementById('compass-dir');
+const DIRS=['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+
+function updateNeedle(deg){
+  deg=((deg%360)+360)%360;
+  lastHeading=deg;
+  // Needle points to magnetic north: rotate the needle group opposite to heading
+  needle.setAttribute('transform',`rotate(${-deg},80,80)`);
+  bearingTxt.textContent=String(Math.round(deg)).padStart(3,'0')+'°';
+  dirTxt.textContent=DIRS[Math.round(deg/22.5)%16];
+}
+
+// Android: deviceorientationabsolute gives alpha=degrees from true north (clockwise)
+// alpha=0 means device top points North, increases clockwise
+// Bearing = alpha for Android absolute; webkitCompassHeading for iOS
+function handleAbsolute(e){
+  if(e.isTrusted===false) return;
+  let h=null;
+  if(e.webkitCompassHeading!=null && !isNaN(e.webkitCompassHeading)){
+    // iOS path
+    h=e.webkitCompassHeading;
+  } else if(e.alpha!=null && !isNaN(e.alpha)){
+    // Android absolute: alpha is clockwise from north
+    h=(360-e.alpha+360)%360;
+  }
+  if(h!==null){ usingRealCompass=true; updateNeedle(h); }
+}
+
+function handleRelative(e){
+  if(usingRealCompass) return; // already have absolute, ignore relative
+  if(e.webkitCompassHeading!=null && !isNaN(e.webkitCompassHeading)){
+    usingRealCompass=true; updateNeedle(e.webkitCompassHeading);
+  } else if(e.alpha!=null && !isNaN(e.alpha) && e.absolute===true){
+    usingRealCompass=true; updateNeedle((360-e.alpha+360)%360);
+  }
+}
+
+function simStep(){
+  if(usingRealCompass) return;
+  simAngle=(simAngle+0.35)%360;
+  updateNeedle(simAngle);
+}
+
+// iOS 13+ permission gate
+if(typeof DeviceOrientationEvent!=='undefined' && typeof DeviceOrientationEvent.requestPermission==='function'){
+  const btn=document.createElement('button');
+  btn.textContent='⬡ ENABLE COMPASS';
+  btn.style.cssText='position:fixed;bottom:20px;right:20px;z-index:9999;font-family:Orbitron,monospace;font-size:10px;letter-spacing:3px;color:#00f5ff;background:rgba(0,0,8,0.9);border:1px solid rgba(0,245,255,0.5);padding:10px 14px;border-radius:6px;cursor:pointer;box-shadow:0 0 12px rgba(0,245,255,0.3);';
+  btn.onclick=()=>{
+    DeviceOrientationEvent.requestPermission().then(s=>{
+      if(s==='granted'){
+        window.addEventListener('deviceorientationabsolute',handleAbsolute,true);
+        window.addEventListener('deviceorientation',handleRelative,true);
+      }
+      btn.remove();
+    }).catch(()=>btn.remove());
+  };
+  document.body.appendChild(btn);
+} else if(typeof DeviceOrientationEvent!=='undefined'){
+  // Android & non-iOS — register both, absolute takes priority
+  window.addEventListener('deviceorientationabsolute',handleAbsolute,true);
+  window.addEventListener('deviceorientation',handleRelative,true);
+}
+
+// Simulation fallback (desktop / no sensor)
+setInterval(simStep,30);
+
+// ── CLOCK + LIVE DATA ──
+function getDayOfYear(d){ return Math.floor((d-new Date(d.getFullYear(),0,0))/(1000*60*60*24)); }
+function getDir(d){ const n=['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW']; return n[Math.round(d/22.5)%16]; }
+const months=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+const days=['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'];
+
+function tick(){
+  const now=new Date();
+  // Clock
+  const hh=String(now.getHours()).padStart(2,'0');
+  const mm=String(now.getMinutes()).padStart(2,'0');
+  document.getElementById('ls-time').textContent=hh+':'+mm;
+  document.getElementById('ls-st').textContent=hh+':'+mm;
+  // Date — month + day + day-name
+  document.getElementById('ls-date').textContent=months[now.getMonth()]+' '+String(now.getDate()).padStart(2,'0')+' · '+days[now.getDay()];
+  // Year
+  const yr=now.getFullYear();
+  document.getElementById('ls-yr').textContent=yr;
+  const yearStart=new Date(yr,0,1), yearEnd=new Date(yr+1,0,1);
+  const passed=now-yearStart, total=yearEnd-yearStart;
+  const pct=((passed/total)*100).toFixed(1);
+  document.getElementById('ls-pct').textContent=pct+'%';
+  document.getElementById('ls-prog').style.width=pct+'%';
+  const dayNum=getDayOfYear(now);
+  const daysLeft=Math.floor((yearEnd-now)/(1000*60*60*24));
+  document.getElementById('ls-day').textContent=dayNum;
+  document.getElementById('ls-rem').textContent=daysLeft;
+  // Countdown to midnight
+  const midnight=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1);
+  const diff=midnight-now;
+  document.getElementById('cd-h').textContent=String(Math.floor(diff/(1000*60*60))).padStart(2,'0');
+  document.getElementById('cd-m').textContent=String(Math.floor((diff/(1000*60))%60)).padStart(2,'0');
+  document.getElementById('cd-s').textContent=String(Math.floor((diff/1000)%60)).padStart(2,'0');
+  // Battery (static 75 unless getBattery supported)
+  if(navigator.getBattery){
+    navigator.getBattery().then(b=>{
+      const p=Math.round(b.level*100);
+      document.getElementById('ls-batp').textContent=p+'%';
+      document.getElementById('ls-batf').style.width=p+'%';
+    }).catch(()=>{});
+  }
+}
+setInterval(tick,1000); tick();
+</script>
+</body>
+</html>
